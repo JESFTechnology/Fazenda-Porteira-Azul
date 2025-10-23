@@ -23,5 +23,5 @@ Neste primeiro momento, informar o Link do GitHub com o projeto. Incluir o profe
 | 💻 Linguagem | Python c/ Flask | <a href="https://github.com/JESFTechnology">JESFTechnology</a>
 | 🗄️ Banco de Dados | MySQL | <a href="https://github.com/lucasa17">lucasa17</a>
 | 📊 Dashboard | HTML, Bootstrap, Chart.js | <a href="https://github.com/Luis-Ricardo-Carvalho">Luis-Ricardo-Carvalho</a>
-| 🔧 Controle de Versão | Git + GitHub | <a href="https://github.com/AlvsLuiz">AlvsLuiz</a>
+| 🔧 Controle de Versão | Git + GitHub | All
 | 🧩 Gerenciamento de Tarefas | GitHub Projects (Kanban) | <a href="https://github.com/AlvsLuiz">AlvsLuiz</a>
