@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style-funcionario.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style-funcionario.css')}}">
     <title>Fazenda Porteira Azul</title>
 
 </head>
 
 <body>
     <header>
-        <a href="main.html">Início</a>
-        <a href="estoque.html">Estoque</a>
-        <a href="funcionario.html">Funcionários</a>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
         <a href="">Maquinário</a>
     </header>
 
@@ -164,4 +164,5 @@
     </script>
 
 </body>
+
 </html>

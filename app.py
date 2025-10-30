@@ -1,5 +1,5 @@
 from src.database import DatabaseConnection
-from flask import Flask, jsonify, render_template, session, request, redirect
+from flask import Flask, jsonify, render_template, session, request, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = "QUYFCUQCQGWCQBWXJHCIsndjsbcajnka"  # Replace with a strong, random key
@@ -20,10 +20,13 @@ def index():
 
 @app.route("/login", methods=["GET"])
 def login():
-    print("User logged in:", session["username"])
-    if "logged_in" in session and session.get("logged_in"):
-        return redirect("/main")
-    return render_template("login.html")
+    try:
+        print("User logged in:", session["username"])
+        if "logged_in" in session and session.get("logged_in"):
+            return redirect("/main")
+        return render_template("login.html")
+    except KeyError:
+        return render_template("login.html")
 
 
 @app.route("/login-check", methods=["POST"])
@@ -47,20 +50,24 @@ def login_data():
     return render_template("login.html", error=user)
 
 
-@app.route("/demo-main", methods=["GET"])
-def demo_main():
-    return render_template("demo-main.html")
+@app.route("/main", methods=["GET"])
+def main():
+    return render_template("main.html")
 
 
-@app.route("/demo-estoque", methods=["GET"])
-def demo_estoque():
-    return render_template("demo-estoque.html")
+@app.route("/estoque", methods=["GET"])
+def estoque():
+    return render_template("estoque.html")
 
 
-@app.route("/demo-funcionario", methods=["GET"])
-def demo_funcionario():
-    return render_template("demo-funcionario.html")
+@app.route("/funcionario", methods=["GET"])
+def funcionario():
+    return render_template("funcionario.html")
 
+@app.route("/exit", methods=["GET"])
+def exit():
+    session.clear()
+    return redirect("/")
 
 @app.route("/data", methods=["GET"])
 def get_data():
