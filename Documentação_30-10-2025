@@ -1,0 +1,172 @@
+Informações Gerais
+Projeto: Fazenda Porteira Azul
+ Versão do Documento: 0.0.1
+ Data: 26/10/2025
+Equipe de Desenvolvimento:
+Johann Estevão Sacconi
+
+
+Lucas Rosa Silva
+
+
+Luís Ricardo Carvalho
+
+
+Luiz Felipe Santos
+
+
+Curso: Sistemas de Informação
+
+1. Resumo do Sistema
+O sistema Fazenda Porteira Azul foi desenvolvido para solucionar problemas de gerenciamento administrativo da fazenda homônima, com o objetivo de analisar e controlar dados de custo de produção agrícola.
+O sistema abrange desde o preparo do solo até o armazenamento e comercialização da produção, permitindo gerenciar:
+Custos de produção;
+
+
+Estoque e localização dos produtos;
+
+
+Preço de mercado por medida de produção;
+
+
+Maquinário e tipo de maquinário utilizado;
+
+
+Empregados (quantidade, funções, tipo de plantio associado).
+
+
+O objetivo principal é fornecer uma visão integrada e automatizada dos processos internos da fazenda, otimizando o controle financeiro e operacional.
+
+2. Escopo
+O sistema cobre as seguintes áreas funcionais:
+Gerenciamento de Produção: registro de tipos de grãos, etapas de cultivo e colheita;
+
+
+Controle de Equipamentos: cadastro e manutenção de maquinários;
+
+
+Gestão de Empregados: controle de funções, quantidade e alocação;
+
+
+Gerenciamento de Custos e Preços: controle de custos internos e comparação com preços de mercado;
+
+
+Controle de Usuários: autenticação e gerenciamento de permissões.
+
+
+
+3. Tecnologias Utilizadas
+Camada
+Tecnologia
+Descrição
+Front-end
+HTML, CSS, JavaScript
+Construção da interface do usuário
+Back-end
+Python (Framework Flask)
+Processamento de dados, controle de rotas e API Web
+Banco de Dados
+MySQL
+Armazenamento e gerenciamento de dados persistentes
+
+
+4. Arquitetura do Sistema
+O sistema foi desenvolvido em três camadas principais:
+Front-end:
+ Desenvolvido utilizando HTML, CSS e JavaScript, é responsável pela interação com o usuário, exibindo páginas dinâmicas e responsivas.
+
+
+Back-end:
+ Implementado em Python com o framework Flask, responsável pelo processamento das requisições, autenticação de usuários e comunicação com o banco de dados.
+
+
+Banco de Dados:
+ Desenvolvido em MySQL, contendo tabelas relacionadas à produção, equipamentos, empregados, usuários e custos.
+
+
+
+5. Estrutura do Projeto
+A seguir, a descrição da estrutura de diretórios e arquivos principais:
+/FazendaPorteiraAzul
+│
+├── /main.py               # Aplicação principal Flask
+│
+├── /SRC
+│   ├── database.py        # Classe de conexão com o banco de dados
+│   ├── user.py            # Classe para gerenciamento de usuários
+│
+├── /templates
+│   ├── login.html         # Página de login do sistema
+│
+└── /static                # (opcional) Arquivos estáticos - CSS, JS, imagens
+
+
+6. Descrição dos Componentes
+6.1. Aplicação Principal (main.py)
+Arquivo responsável por iniciar o servidor Flask e gerenciar o sistema de sessões e rotas da API Web.
+
+6.2. Módulo de Banco de Dados (database.py)
+Define a classe DatabaseConnection, que gerencia a conexão com o banco de dados.
+ Métodos principais:
+connect(self): Estabelece conexão com o banco.
+
+
+get_cursor(self): Retorna o cursor ativo da conexão.
+
+
+close(self): Encerra a conexão com o banco.
+
+
+auth_with_email_and_password(self, email, password) -> tuple: Autentica um usuário com base em e-mail e senha.
+
+
+A classe recebe os parâmetros:
+ host, database, user, password, connection.
+
+6.3. Classe de Usuário (user.py)
+Representa o modelo de usuário do sistema, utilizado para futuras implementações de sessão e autenticação.
+ Atributos:
+id_user
+
+
+username
+
+
+email
+
+
+id_user_type_fk
+
+
+id_employee_fk
+
+
+Método principal:
+serialize(): Retorna os dados do usuário em formato JSON.
+
+
+
+6.4. Diretório /templates
+Contém as páginas HTML do sistema.
+ Atualmente inclui:
+login.html — Página de autenticação de usuários, utilizada para entrada no sistema.
+
+
+
+7. Diagrama do Banco de Dados (MySQL)
+(Diagrama a ser implementado)
+O diagrama deve ilustrar as relações entre as tabelas de Produção, Empregados, Maquinário, Usuários e Custos.
+
+8. Considerações Finais
+O sistema Fazenda Porteira Azul representa uma solução integrada para o controle e análise das atividades agrícolas, buscando automatizar o gerenciamento administrativo e operacional da fazenda.
+As próximas versões do sistema deverão incluir:
+Relatórios analíticos e gráficos de produção;
+
+
+Sistema de permissões e perfis de usuários;
+
+
+Interface aprimorada para dispositivos móveis.
+
+
+
