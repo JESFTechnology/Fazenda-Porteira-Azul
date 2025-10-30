@@ -1,0 +1,31 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Css/style.css">
+    <link rel="stylesheet" href="Css/style-login.css">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="container">
+        <form action="login-check" method="post">
+            <h2>Bem vindo</h2>
+            <div class="input">
+                <label for="email">Email: </label>
+                <input type="email" class="email" name="email" id="email">
+            </div>
+            <br>
+            <div class="input">
+                <label for="password">Senha: </label>
+                <input type="password" class="password" name="password" id="password">
+            </div>
+            <br>
+            <input type="submit" value="Entrar" class="enter">
+            <p class="messagem">{{error}}</p>
+        </form>
+    </div>
+</body>
+
+</html>
