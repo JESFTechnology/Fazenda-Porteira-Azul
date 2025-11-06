@@ -26,10 +26,15 @@ th {
     text-align: center;
     width: 100%;
     padding: 6px;
-    border: 1px solid #c4c4c4;
 }
 
 .btn-editar {
     color: #1e90ff;
     cursor: pointer;
+}
+
+.semBack-white{
+    background-color: #00000000;
+    color: #fff;
+    border: 0;
 }

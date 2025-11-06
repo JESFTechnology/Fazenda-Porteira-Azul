@@ -41,18 +41,20 @@
             <tr>
                 <form action="estoque-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage" class=""></td>
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
                     <td class="Margin_Padding">
-                        <select name="grain" id="form_grain_storage" class="input-value"></select>
+                        <select name="grain" id="form_grain_storage" class="input-value semBack-white">
+                            <option value="teste">teste</option>
+                        </select>
                     </td>
                     <td class="Margin_Padding">
-                        <input type="number" name="amount" value="0" class="input-value" id="amount_storage">
+                        <input type="number" name="amount" value="0" class="input-value semBack-white" id="amount_storage">
                     </td>
                     <td class="Margin_Padding">
-                        <select name="location" id="form_local_storage" class="input-value"></select>
+                        <select name="location" id="form_local_storage" class="input-value semBack-white"></select>
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
@@ -64,6 +66,7 @@
                 <td class="Margin_Padding">{{ item.local }}</td>
                 <td class="Margin_Padding">
                     <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                    <hr>
                     <p id="delete_storage_{{item.id}}">Excluir</p>
                 </td>
             </tr>
