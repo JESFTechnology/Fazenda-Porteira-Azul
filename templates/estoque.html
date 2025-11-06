@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
+<head id="head">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/dark-style.css')}}" id="stylesheet_body">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/dark-style-estoque.css')}}"
+        id="stylesheet_body_storage">
     <title>Demo</title>
 
     <style>
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -34,36 +35,135 @@
         <a href="estoque">Estoque</a>
         <a href="funcionario">Funcionários</a>
         <a href="">Maquinário</a>
+        <a id="theme">Tema: </a>
     </header>
 
     <section>
         <h1>Estoque</h1>
         <table>
             <tr>
+                <th>ID</th>
                 <th>Produto</th>
                 <th>Quantidade</th>
-                <th>Preço Unitário</th>
+                <th>Localização</th>
+                <th>Ações</th>
             </tr>
             <tr>
-                <td>Milho</td>
-                <td>1500 kg</td>
-                <td>R$ 2,50</td>
+                <form action="estoque-gerenciamento" method="post">
+                    <td>0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td>
+                        <select name="grain" id="form_grain_storage">
+
+                        </select>
+                    </td>
+                    <td><input type="number" name="amount" class="input-value" id="input_quantidade_estoque"></td>
+                    <td>
+                        <select name="location" id="form_local_storage">
+
+                        </select>
+                    </td>
+                    <td>
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit">
+                    </td>
+                </form>
             </tr>
+            {% for item in list_storage %}
             <tr>
-                <td>Soja</td>
-                <td>800 kg</td>
-                <td>R$ 3,20</td>
+                <td>{{ item.id}}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity_bags }}</td>
+                <td>{{ item.local }}</td>
+                <td>
+                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                </td>
             </tr>
-            <tr>
-                <td>Trigo</td>
-                <td>600 kg</td>
-                <td>R$ 4,00</td>
-            </tr>
+            {% endfor %}
         </table>
     </section>
 
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
+    <script>
+        document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
+            item.addEventListener("click", event => {
+                const id = item.id.split("_")[2];
+                if (id) {
+                    const id_storage = document.getElementById("id_storage");
+                    id_storage.value = id;
+
+                    const btn_submit = document.getElementById("btn-submit");
+                    btn_submit.value = "Editar";
+
+                    const list_grains = {{ list_grains | tojson }};
+                    const grain_storage = document.getElementById("form_grain_storage");
+                    const selected_id_grain = parseInt(item.id.split("_")[3]);
+                    grain_storage.innerHTML = list_grains.map(g =>
+                        `<option value="${g.id_grain}" ${g.id_grain === selected_id_grain ? 'selected' : ''}>${g.name}</option>`
+                    ).join('');
+
+                    const list_locations = {{ locations | tojson }};
+                    const local_storage = document.getElementById("form_local_storage");
+                    const selected_id_local = parseInt(item.id.split("_")[4]);
+                    local_storage.innerHTML = list_locations.map(l =>
+                        `<option value="${l.id_storage_location}" ${l.id_storage_location === selected_id_local ? 'selected' : ''}>${l.name}</option>`
+                    ).join('');
+                }
+            });
+        });
+
+        document.getElementById("form_grain_storage").innerHTML = `
+            {% for grain in list_grains %}
+                <option value="{{ grain.id_grain }}">{{ grain.name }}</option>
+            {% endfor %}
+        `;
+
+        document.getElementById("form_local_storage").innerHTML = `
+            {% for location in locations %}
+                <option value="{{ location.id_storage_location }}">{{ location.name }}</option>
+            {% endfor %}
+        `
+
+        document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
+            item.addEventListener("click", event => {
+                alert("O item será removido do estoque.");
+                const id = item.id.split("_")[2];
+                if (id !== null) {
+                    const id_storage = document.getElementById("id_storage");
+                    id_storage.value = id;
+                    const btn_submit = document.getElementById("btn-submit");
+                    btn_submit.value = "Remover";
+                    btn_submit.click();
+                }
+            });
+        });
+
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
+            } else {
+                localStorage.setItem("theme", "dark");
+            }
+            location.reload();
+        });
+
+        console.log(localStorage.getItem("theme"))
+        if (localStorage.getItem("theme") == "dark") {
+            console.log("Dark mode activated");
+            document.getElementById("theme").innerText = "Tema: Escuro";
+            document.getElementById("stylesheet_body").href =
+                `{{url_for('static', filename='css/dark-style.css')}}`;
+            document.getElementById("stylesheet_body_storage").href =
+                `{{url_for('static', filename='css/dark-style-estoque.css')}}`;
+        } else {
+            document.getElementById("theme").innerText = "Tema: Claro";
+            document.getElementById("stylesheet_body").href =
+                `{{url_for('static', filename='css/style.css')}}`;
+            document.getElementById("stylesheet_body_storage").href =
+                `{{url_for('static', filename='css/style-estoque.css')}}`;
+        }
+    </script>
 </body>
+
 </html>

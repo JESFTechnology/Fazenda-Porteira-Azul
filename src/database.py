@@ -29,6 +29,10 @@ class DatabaseConnection:
         else:
             raise Exception("Banco de dados offlie. Tente novamente mais tarde.")
 
+    def commit(self):
+        if self.connection:
+            self.connection.commit()
+
     def close(self):
         if self.connection:
             self.connection.close()
