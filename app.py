@@ -128,6 +128,14 @@ def estoque_gerenciamento():
             print(query)
         else:
             print("ID is None, cannot remove storage item.")
+    elif button == "Editar":
+        if id is not None:
+            db.connect()
+            cursor = db.get_cursor()
+            query = f"UPDATE storage SET id_grain_fk = {int(grain)}, id_location_fk = {int(location)}, quantity_bags = {int(amount)} WHERE id_storage = {int(id)};"
+            cursor.execute(query)
+            db.commit()
+            db.close()
     return redirect("/estoque")
 
 
