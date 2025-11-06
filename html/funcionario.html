@@ -30,17 +30,38 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="" method="post">
-                    <td class="Margin_Padding"><input type="text" value="?" class="input-value semBack-white" id="input_id" disabled></td>
-                    <td class="Margin_Padding"><input type="text" name="name" class="input-value semBack-white" id="input_name"></td>
-                    <td class="Margin_Padding"><input type="text" name="cargo" class="input-value semBack-white" id="input_cargo"></td>
-                    <td class="Margin_Padding"><input type="number" name="saalrio" class="input-value semBack-white" id="input_salario"></td>
-                    <input type="hidden" name="id" id="hidden_id" value="cadastrar">
+                <form action="estoque-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        <input type="submit" class="button-submit input-value semBack-white" value="Salvar" onclick="salvar()">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <select name="name" id="form_grain_storage" class="input-value semBack-white">
+                            <option value="teste">teste</option>
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="cargo" name="amount" value="0" class="input-value semBack-white" id="amount_storage">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="salario" id="form_local_storage" class="input-value semBack-white"></select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="cadastrar" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
+            {% for item in list_storage %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
+                <td class="Margin_Padding">{{ item.local }}</td>
+                <td class="Margin_Padding">
+                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                    <hr>
+                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
         </table>
     </section>
 
