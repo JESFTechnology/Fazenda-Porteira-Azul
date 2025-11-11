@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./../static/css/dark-style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css">
     <link rel="stylesheet" href="./../static/css/dark-style-estoque.css"
         id="stylesheet_body_storage">
     <title>Demo</title>
@@ -51,7 +52,7 @@
                     </td>
                 </form>
             </tr>
-            {% for item in list_storage %}
+            <!--{% for item in list_storage %}
             <tr>
                 <td class="Margin_Padding">{{ item.id}}</td>
                 <td class="Margin_Padding">{{ item.name }}</td>
@@ -63,14 +64,82 @@
                     <p id="delete_storage_{{item.id}}">Excluir</p>
                 </td>
             </tr>
+            {% endfor %}-->
+
+            
+            {% for item in list_storage %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
+                <td class="Margin_Padding">{{ item.local }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit"
+                    data-id="{{ item.id }}"
+                    data-name="{{ item.name }}"
+                    data-quantity="{{ item.quantity_bags }}"
+                    data-local="{{ item.local }}">
+                    Editar
+                    </p>
+                    <hr>
+                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                </td>
+            </tr>
             {% endfor %}
+
         </table>
     </section>
 
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
+
+    <div id="popup_edit" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Armazenamento</h3>
+                <span id="close_popup">&times;</span>
+            </div>
+
+            <form id="form_edit">
+                <input type="hidden" id="edit_id">
+
+                <label>Nome</label>
+                <input type="text" id="edit_name">
+
+                <label>Sacos</label>
+                <input type="number" id="edit_quantity_bags">
+
+                <label>Local</label>
+                <input type="text" id="edit_local">
+
+                <button type="submit" class="btn-save-popup">Salvar</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        /*popup inicio*/
+
+        const popup = document.getElementById("popup_edit");
+        const closePopup = document.getElementById("close_popup");
+
+        document.querySelectorAll(".btn_edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+            document.getElementById("edit_id").value = btn.dataset.id;
+            document.getElementById("edit_name").value = btn.dataset.name;
+            document.getElementById("edit_quantity_bags").value = btn.dataset.quantity;
+            document.getElementById("edit_local").value = btn.dataset.local;
+
+            popup.style.display = "block";
+            });
+        });
+
+        closePopup.onclick = () => popup.style.display = "none";
+        window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
+
+        /*popup fim*/
+        /*
         document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
             item.addEventListener("click", event => {
                 const id = item.id.split("_")[2];
@@ -100,7 +169,7 @@
                     ).join('');
                 }
             });
-        });
+        });*/
 
         document.getElementById("form_grain_storage").innerHTML = `
             {% for grain in list_grains %}
