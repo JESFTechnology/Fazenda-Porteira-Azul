@@ -139,7 +139,6 @@
         window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
 
         /*popup fim*/
-        /*
         document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
             item.addEventListener("click", event => {
                 const id = item.id.split("_")[2];
@@ -169,7 +168,7 @@
                     ).join('');
                 }
             });
-        });*/
+        });
 
         document.getElementById("form_grain_storage").innerHTML = `
             {% for grain in list_grains %}
