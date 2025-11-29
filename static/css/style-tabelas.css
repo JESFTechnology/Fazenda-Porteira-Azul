@@ -1,0 +1,51 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #000;
+    padding: 8px;
+}
+
+th {
+    color: black;
+    background-color: #454545;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    color: black;
+    border: 1px solid #000;
+    padding: 8px;
+}
+
+.button-submit {
+    padding: 6px 12px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.input-value {
+    text-align: center;
+    width: 100%;
+    padding: 6px;
+}
+
+.btn-editar {
+    color: #1e90ff;
+    cursor: pointer;
+}
+
+.semBack-white{
+    background-color: #00000000;
+    color: #000;
+    border: 0;
+}
