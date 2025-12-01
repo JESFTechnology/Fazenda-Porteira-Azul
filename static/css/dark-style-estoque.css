@@ -11,6 +11,10 @@ th, td {
 
 th {
     color: white;
-    background-color: #9d9d9d;
+    background-color: #454545;
     text-align: left;
+}
+
+option{
+    color: black;
 }

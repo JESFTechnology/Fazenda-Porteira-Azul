@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <title>Fazenda Porteira Azul</title>
+
+</head>
+
+<body>
+    <header>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a id="theme">Tema: </a>
+    </header>
+
+    <section>
+        <h1>Uso do Maquinário</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Data de uso</th>
+                <th>Horas</th>
+                <th>Combustivel Gasto</th>
+                <th>Observações</th>
+                <th>Máquina</th>
+                <th>Funcionário</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="estoque-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="date">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="amount" value="0" class="input-value semBack-white"
+                            id="amount_storage">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="location" id="form_local_storage" class="input-value semBack-white"></select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_machinery %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_usage}}</td>
+                <td class="Margin_Padding">{{ item.usage_date }}</td>
+                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.hours_usage }}</td>
+                <td class="Margin_Padding">{{ item.fuel_consumed }}</td>
+                <td class="Margin_Padding">{{ item.observation }}</td>
+                <td class="Margin_Padding">{{ item.machinery }}</td>
+                <td class="Margin_Padding">{{ item.employees }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <footer>
+        <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
+    </footer>
+
+    <script>
+        console.log(localStorage.getItem("theme"))
+        if (localStorage.getItem("theme") == "dark") {
+            console.log("Dark mode activated");
+            document.getElementById("theme").innerText = "Tema: Escuro";
+            document.getElementById("stylesheet_body").href =
+                `{{url_for('static', filename='css/dark-style.css')}}`;
+            document.getElementById("stylesheet_body_storage").href =
+                `{{url_for('static', filename='css/dark-style-estoque.css')}}`;
+        } else {
+            document.getElementById("theme").innerText = "Tema: Claro";
+            document.getElementById("stylesheet_body").href =
+                `{{url_for('static', filename='css/style.css')}}`;
+            document.getElementById("stylesheet_body_storage").href =
+                `{{url_for('static', filename='css/style-estoque.css')}}`;
+        }
+    </script>
+
+</body>
+
+</html>

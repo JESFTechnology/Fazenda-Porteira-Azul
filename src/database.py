@@ -27,7 +27,7 @@ class DatabaseConnection:
         if self.connection:
             return self.connection.cursor()
         else:
-            raise Exception("Banco de dados offlie. Tente novamente mais tarde.")
+            raise Exception("Banco de dados offline. Tente novamente mais tarde.")
 
     def commit(self):
         if self.connection:

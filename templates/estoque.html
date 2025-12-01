@@ -4,29 +4,13 @@
 <head id="head">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{url_for('static', filename='css/dark-style.css')}}" id="stylesheet_body">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/dark-style-estoque.css')}}"
+    <link rel="stylesheet" href="./../static/css/dark-style.css" id="stylesheet_body">
+    <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css">
+    <link rel="stylesheet" href="./../static/css/dark-style-estoque.css"
         id="stylesheet_body_storage">
     <title>Demo</title>
 
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #c4c4c4;
-            padding: 8px;
-        }
-
-        th {
-            color: white;
-            background-color: #454545;
-            text-align: left;
-        }
-    </style>
 </head>
 
 <body>
@@ -34,7 +18,7 @@
         <a href="main">Início</a>
         <a href="estoque">Estoque</a>
         <a href="funcionario">Funcionários</a>
-        <a href="">Maquinário</a>
+        <a href="maquinario">Maquinário</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -50,42 +34,125 @@
             </tr>
             <tr>
                 <form action="estoque-gerenciamento" method="post">
-                    <td>0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
-                    <td>
-                        <select name="grain" id="form_grain_storage">
-
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <select name="grain" id="form_grain_storage" class="input-value semBack-white">
+                            <option value="teste">Teste</option>
                         </select>
                     </td>
-                    <td><input type="number" name="amount" value="0" class="input-value" id="amount_storage"></td>
-                    <td>
-                        <select name="location" id="form_local_storage">
-
-                        </select>
+                    <td class="Margin_Padding">
+                        <input type="number" name="amount" value="0" class="input-value semBack-white" id="amount_storage">
                     </td>
-                    <td>
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit">
+                    <td class="Margin_Padding">
+                        <select name="location" id="form_local_storage" class="input-value semBack-white"></select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
+            <!--{% for item in list_storage %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
+                <td class="Margin_Padding">{{ item.local }}</td>
+                <td class="Margin_Padding">
+                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                    <hr>
+                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}-->
+
+            
             {% for item in list_storage %}
             <tr>
-                <td>{{ item.id}}</td>
-                <td>{{ item.name }}</td>
-                <td id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
-                <td>{{ item.local }}</td>
-                <td>
-                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                <td class="Margin_Padding">{{ item.id}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
+                <td class="Margin_Padding">{{ item.local }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit"
+                    data-id="{{ item.id }}"
+                    data-grain_id="{{ item.id_grain }}"
+                    data-quantity="{{ item.quantity_bags }}"
+                    data-local_id="{{ item.id_location }}">
+                    Editar
+                    </p>
+                    <hr>
                     <p id="delete_storage_{{item.id}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
+
         </table>
     </section>
 
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
+
+    <div id="popup_edit" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Armazenamento</h3>
+                <span id="close_popup">&times;</span>
+            </div>
+
+            <form id="form_edit" action="estoque-gerenciamento" method="post">
+                <input type="hidden" name="id_storage" id="edit_id">
+
+                <label>Produto / Grãos</label>
+                <select name="grain" id="edit_grain" id="edit_grain"></select>
+
+                <label>Sacos / 60Kg</label>
+                <input type="number" name="amount" id="edit_quantity_bags">
+
+                <label>Local</label>
+                <select name="location" id="edit_local"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
     <script>
+        /*popup inicio*/
+
+        const popup = document.getElementById("popup_edit");
+        const closePopup = document.getElementById("close_popup");
+
+        document.querySelectorAll(".btn_edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+            document.getElementById("edit_id").value = btn.dataset.id;
+            console.log("Id: "+btn.dataset.id+" | Grain: "+btn.dataset.grain_id+" | Local: "+btn.dataset.local_id)
+            const list_grains = {{ list_grains | tojson }};
+            const grain_storage = document.getElementById("edit_grain");
+            const selected_id_grain =  btn.dataset.grain_id;
+            list_grains.map(g => console.log(g.id_grain == selected_id_grain));
+            grain_storage.innerHTML = list_grains.map(g =>
+                `<option style="color: white;" value="${g.id_grain}" ${g.id_grain == selected_id_grain ? 'selected' : ''}>${g.name}</option>`
+            ).join('');
+
+            const list_locations = {{ locations | tojson }};
+            const local_storage = document.getElementById("edit_local");
+            const selected_id_local = btn.dataset.local_id;
+            local_storage.innerHTML = list_locations.map(l =>
+                `<option style="color: white" value="${l.id_storage_location}" ${l.id_storage_location == selected_id_local ? 'selected' : ''}>${l.name}</option>`
+            ).join('');
+
+            document.getElementById("edit_quantity_bags").value = btn.dataset.quantity;
+
+            popup.style.display = "block";
+            });
+        });
+
+        closePopup.onclick = () => popup.style.display = "none";
+        window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
+
+        /*popup fim*/
         document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
             item.addEventListener("click", event => {
                 const id = item.id.split("_")[2];
@@ -131,9 +198,9 @@
 
         document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
             item.addEventListener("click", event => {
-                alert("O item será removido do estoque.");
+                const conf = confirm("Deseja realmente deletar esse estoque?")
                 const id = item.id.split("_")[2];
-                if (id !== null) {
+                if (id !== null && conf) {
                     const id_storage = document.getElementById("id_storage");
                     id_storage.value = id;
                     const btn_submit = document.getElementById("btn-submit");

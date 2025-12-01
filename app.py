@@ -59,13 +59,16 @@ def main():
 
 @app.route("/estoque", methods=["GET"])
 def estoque():
-    db.connect()
-    cursor = db.get_cursor()
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
     query = """
     SELECT s.id_storage AS id, CONCAT(g.name, " ", g.`type`) AS name, 
        s.quantity_bags, 
        sl.name AS local, s.id_grain_fk, s.id_location_fk
-    FROM storage s LEFT JOIN storagelocations sl ON sl.id_storage_location = s.id_location_fk LEFT JOIN grains g ON g.id_grain = s.id_grain_fk;"""
+    FROM storage s LEFT JOIN storagelocations sl ON sl.id_storage_location = s.id_location_fk LEFT JOIN grains g ON g.id_grain = s.id_grain_fk ORDER BY s.id_storage DESC;"""
     cursor.execute(query)
     list_storage = []
     materials = cursor.fetchall()
@@ -141,7 +144,55 @@ def estoque_gerenciamento():
 
 @app.route("/funcionario", methods=["GET"])
 def funcionario():
-    return render_template("funcionario.html")
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    query = """
+    SELECT u.id_user AS id, e.name, u.email, e.job 
+    FROM users AS u INNER JOIN employees AS e 
+    ON e.id_employee = u.id_employee_fk ORDER BY e.name;"""
+    cursor.execute(query)
+    list_employees = []
+    employees = cursor.fetchall()
+    for employee in employees:
+        list_employees.append(
+            {
+                "id": employee[0],
+                "name": employee[1],
+                "email": employee[2],
+                "job": employee[3],
+            }
+        )
+    return render_template("funcionario.html", list_employees=list_employees)
+
+
+@app.route("/maquinario", methods=["GET"])
+def maquinario():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    query = """
+    SELECT id_machinery_usage, usage_date, hours_usage, fuel_consumed, observation, CONCAT(m.model," / ",m.`year`)AS machinery, e.name AS employees FROM machineryusage AS mu INNER JOIN machinery AS m ON mu.id_machinery_fk = m.id_machinery INNER JOIN employees AS e ON e.id_employee = mu.id_employee_fk;"""
+    cursor.execute(query)
+    list_machinery = []
+    machineries = cursor.fetchall()
+    for machinery in machineries:
+        list_machinery.append(
+            {
+                "id_machinery_usage": machinery[0],
+                "usage_date": machinery[1],
+                "hours_usage": machinery[2],
+                "fuel_consumed": machinery[3],
+                "observation": machinery[4],
+                "machinery":machinery[5],
+                "employees":machinery[6]
+            }
+        )
+    return render_template("maquinario.html", list_machinery=list_machinery)
 
 
 @app.route("/exit", methods=["GET"])

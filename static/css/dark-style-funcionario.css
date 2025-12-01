@@ -35,3 +35,12 @@ th {
     color: #1e90ff;
     cursor: pointer;
 }
+
+option{
+    color: black;
+}
+
+.Link_Send_Email_Td{
+    color: white;
+    text-decoration: none;
+}
