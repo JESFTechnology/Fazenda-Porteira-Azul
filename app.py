@@ -230,18 +230,61 @@ def funcionario():
         db.connect()
         cursor = db.get_cursor()
         query = """
-        SELECT u.id_user AS id, e.name, u.email, e.job
-        FROM users AS u
-        INNER JOIN employees AS e ON e.id_employee = u.id_employee_fk
-        ORDER BY e.name;
+        SELECT u.id_user AS id, e.name, u.email, ut.description, u.activity
+        FROM users AS u INNER JOIN usertype AS ut ON ut.id_user_type = u.id_user_type_fk INNER JOIN employees AS e ON e.id_employee = u.id_employee_fk;
         """
         cursor.execute(query)
         employees = cursor.fetchall()
         list_employees = [
-            {"id": emp[0], "name": emp[1], "email": emp[2], "job": emp[3]}
+            {"id": emp[0], "name": emp[1], "email": emp[2], "desc": emp[3], "activity":  "Ativo " if int(emp[4]) == 1 else "Inativo"}
             for emp in employees
         ]
-        return render_template("funcionario.html", list_employees=list_employees)
+        query = """
+        SELECT employees.id_employee, employees.NAME, employees.cpf, employees.job, employees.base_salary, employees.weekly_hours, employees.hire_date, crops.name, crops.id_crop 
+        FROM employees INNER JOIN crops ON id_crop_fk=crops.id_crop;
+        """
+        cursor.execute(query)
+        employees_no_perfil = cursor.fetchall()
+        list_employees_no_perfil = [
+            {
+                "id_employee": usr[0],
+                "name": usr[1],
+                "cpf": usr[2],
+                "job": usr[3],
+                "base_salary": usr[4],
+                "weekly_hours": usr[5],
+                "hire_date": usr[6],
+                "name_crop_fk": usr[7],
+                "id_crop_fk":usr[8]
+            }
+            for usr in employees_no_perfil
+        ]
+
+        query = """
+        SELECT id_user_type, DESCRIPTION FROM usertype;
+        """
+        cursor.execute(query)
+        usertype = cursor.fetchall()
+        list_usertype = [
+            {"id_user_type": usr[0], "description": usr[1]} for usr in usertype
+        ]
+
+        query = """
+        SELECT id_crop, name FROM crops;
+        """
+        cursor.execute(query)
+        usertype = cursor.fetchall()
+        list_crop = [
+            {"id_crop": usr[0], "description": usr[1]} for usr in usertype
+        ]
+
+        return render_template(
+            "funcionario.html",
+            list_employees=list_employees,
+            list_employees_no_perfil=list_employees_no_perfil,
+            list_usertype=list_usertype,
+            locations=list_crop
+        )
     except Exception as e:
         return render_template("erro404.html", msg=e)
     finally:
@@ -249,6 +292,128 @@ def funcionario():
             db.close()
         except:
             pass
+
+
+@app.route("/funcionario-gerenciamento", methods=["POST"])
+def funcionario_gerenciamento():
+    """
+    Rota para gerenciar funcionários (INSERT, UPDATE, DELETE)
+    """
+    id_employee = request.form.get("id_employee")
+    name = request.form.get("name")
+    cpf = request.form.get("cpf")
+    job = request.form.get("job")
+    salary = request.form.get("salary")
+    weekly_hours = request.form.get("weekly_hours")
+    hire_date = request.form.get("hire_date")
+    crop_location = request.form.get("crop_location")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_employee)
+    salary_val = _to_float_or_none(salary)
+    weekly_hours_val = _to_int_or_none(weekly_hours)
+    crop_location_val = _to_int_or_none(crop_location)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            # INSERT novo funcionário
+            query = """
+                INSERT INTO employees (name, cpf, job, base_salary, weekly_hours, hire_date, id_crop_fk)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            """
+            params = (name, cpf, job, salary_val, weekly_hours_val, hire_date, crop_location_val)
+            cursor.execute(query, params)
+            db.commit()
+            print(f"✅ Funcionário '{name}' adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            # DELETE funcionário
+            if id_val is not None:
+                query = "DELETE FROM employees WHERE id_employee = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Funcionário com ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            # UPDATE funcionário
+            if id_val is not None:
+                query = """
+                    UPDATE employees
+                    SET name = %s,
+                        cpf = %s,
+                        job = %s,
+                        base_salary = %s,
+                        weekly_hours = %s,
+                        hire_date = %s,
+                        id_crop_fk = %s
+                    WHERE id_employee = %s;
+                """
+                params = (name, cpf, job, salary_val, weekly_hours_val, hire_date, crop_location_val, id_val)
+                cursor.execute(query, params)
+                db.commit()
+                print(f"✅ Funcionário ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print(f"❌ Erro em funcionario_gerenciamento: {e}")
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/funcionario")
+
+
+@app.route("/usertype-gerenciamento", methods=["POST"])
+def usertype_gerenciamento():
+    """
+    Rota para gerenciar tipos de usuário (INSERT, UPDATE, DELETE)
+    """
+    id_user_type = request.form.get("id_user_type")
+    description = request.form.get("description")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_user_type)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            # INSERT novo tipo de usuário
+            query = "INSERT INTO usertype (DESCRIPTION) VALUES (%s);"
+            cursor.execute(query, (description,))
+            db.commit()
+            print(f"✅ Tipo de usuário '{description}' adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            # DELETE tipo de usuário
+            if id_val is not None:
+                query = "DELETE FROM usertype WHERE id_user_type = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Tipo de usuário ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            # UPDATE tipo de usuário
+            if id_val is not None:
+                query = "UPDATE usertype SET DESCRIPTION = %s WHERE id_user_type = %s;"
+                cursor.execute(query, (description, id_val))
+                db.commit()
+                print(f"✅ Tipo de usuário ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print(f"❌ Erro em usertype_gerenciamento: {e}")
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/funcionario")
 
 
 # -------------------------
@@ -631,6 +796,105 @@ def cotacao_gerenciamento():
             pass
 
     return redirect("/bolsa")
+
+
+@app.route("/producao", methods=["GET"])
+def producao():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    query = """SELECT * FROM grains;"""
+    cursor.execute(query)
+    list_grains = []
+    grains = cursor.fetchall()
+    for grain in grains:
+        list_grains.append({"id_grain": grain[0], "name": grain[1], "type": grain[2]})
+    query = """SELECT * FROM costtypes;"""
+    cursor.execute(query)
+    list_costtypes = []
+    costtypes = cursor.fetchall()
+    for costtype in costtypes:
+        list_costtypes.append(
+            {
+                "id_cost_type": costtype[0],
+                "name": costtype[1],
+                "cost_value": costtype[2],
+            }
+        )
+
+    query = """SELECT p.id_production_cost, p.cost_date, p.description, c.name FROM productioncosts AS p INNER JOIN costtypes AS c on p.id_cost_type_fk = c.id_cost_type;"""
+    cursor.execute(query)
+    list_productioncosts = []
+    productioncosts = cursor.fetchall()
+    for productioncost in productioncosts:
+        list_productioncosts.append(
+            {
+                "id_production_cost": productioncost[0],
+                "cost_date": productioncost[1],
+                "description": productioncost[2],
+                "cost_type_fk": productioncost[3],
+            }
+        )
+    query = """SELECT id_crop,name,area_hectares,current_season FROM crops;"""
+    cursor.execute(query)
+    list_cropies = []
+    cropies = cursor.fetchall()
+    for crops in cropies:
+        list_cropies.append(
+            {
+                "id_crop": crops[0],
+                "name": crops[1],
+                "area_hectares": crops[2],
+                "current_season": crops[3],
+            }
+        )
+
+    db.close()
+    return render_template(
+        "producao.html",
+        list_grains=list_grains,
+        list_costtypes=list_costtypes,
+        list_productioncosts=list_productioncosts,
+        list_cropies=list_cropies,
+    )
+
+
+@app.route("/bolsa", methods=["GET"])
+def bolsa():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    query = """SELECT m.id_market_quotes,m.price_per_bag,m.quote_date,m.observation,CONCAT(g.name,' - ',g.type) FROM marketquotes AS m INNER JOIN grains AS g ON m.id_grain_fk = g.id_grain;"""
+    cursor.execute(query)
+    list_marketquotes = []
+    marketquotes = cursor.fetchall()
+    for marketquote in marketquotes:
+        list_marketquotes.append(
+            {
+                "id_market_quotes": marketquote[0],
+                "price_per_bag": marketquote[1],
+                "quote_date": marketquote[2],
+                "observation": marketquote[3],
+                "grain": marketquote[4],
+            }
+        )
+    query = """SELECT * FROM grains;"""
+    cursor.execute(query)
+    list_grains = []
+    grains = cursor.fetchall()
+    for grain in grains:
+        list_grains.append({"id_grain": grain[0], "name": grain[1], "type": grain[2]})
+
+    return render_template(
+        "bolsa.html",
+        cotacao=money_coffe_requests(),
+        list_marketquotes=list_marketquotes,
+        list_grains=list_grains,
+    )
 
 
 # -------------------------

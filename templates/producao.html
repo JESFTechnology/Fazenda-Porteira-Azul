@@ -146,6 +146,49 @@
             </tr>
             {% endfor %}
         </table>
+        <br>
+        <h1>Talhão</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Área (Hectares)</th>
+                <th>Temporada de plantio</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_cropies %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_crop}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">{{ item.area_hectares }}</td>
+                <td class="Margin_Padding">{{ item.current_season }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </section>
 
     <footer>

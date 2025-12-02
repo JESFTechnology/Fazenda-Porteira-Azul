@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-funcionario.css">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Fazenda Porteira Azul</title>
 </head>
@@ -24,13 +25,14 @@
     </header>
 
     <section>
-        <h1>Funcionários</h1>
+        <h1>Funcionários com perfil</h1>
         <table>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Cargo</th>
+                <th>Setor</th>
+                <th>Status</th>
                 <th>Ações</th>
             </tr>
             {% for item in list_employees %}
@@ -38,8 +40,121 @@
                 <td class="Margin_Padding">{{ item.id}}</td>
                 <td class="Margin_Padding">{{ item.name }}</td>
                 <td class="Margin_Padding">{{ item.email }}</td>
-                <td class="Margin_Padding">{{ item.job }}</td>
+                <td class="Margin_Padding">{{ item.desc }}</td>
+                <td class="Margin_Padding">{{ item.activity }}</td>
                 <td class="Margin_Padding"><a class="Link_Send_Email_Td" href="mailto:{{ item.email }}">Enviar email</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Funcionários em geral</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Cargo</th>
+                <th>Salário</th>
+                <th>Horas de trabalho</th>
+                <th>Data de entrada</th>
+                <th>Local de trabalho</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="funcionario-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_employee" id="id_employee"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="form_name_employee" placeholder="Digite o nome:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="cpf" value="" class="input-value semBack-white" id="form_cpf_employee" placeholder="Digite o CPF:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="job" value="" class="input-value semBack-white" id="form_job_employee" placeholder="Digite o cargo:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" step="0.01" name="salary" value="0" class="input-value semBack-white" id="form_salary_employee">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="weekly_hours" value="0" class="input-value semBack-white" id="form_hours_employee">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="date" name="hire_date" value="" class="input-value semBack-white" id="form_hire_date_employee">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="crop_location" class="input-value semBack-white">
+                            {% for item in locations %}
+                                <option value="{{ item.id_crop }}">{{ item.description }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_employees_no_perfil %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_employee}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">{{ item.cpf }}</td>
+                <td class="Margin_Padding">{{ item.job }}</td>
+                <td class="Margin_Padding">{{ item.base_salary }}</td>
+                <td class="Margin_Padding">{{ item.weekly_hours }}</td>
+                <td class="Margin_Padding">{{ item.hire_date }}</td>
+                <td class="Margin_Padding">{{ item.name_crop_fk }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit p_actions"
+                    data-id="{{ item.id_employee }}"
+                    data-name="{{ item.name }}"
+                    data-cpf="{{ item.cpf }}"
+                    data-job="{{ item.job }}"
+                    data-salary="{{ item.base_salary }}"
+                    data-hours="{{ item.weekly_hours }}"
+                    data-hire_date="{{ item.hire_date }}"
+                    data-location_id="{{ item.id_crop_fk }}">
+                    Editar
+                    </p>
+                    <hr>
+                    <p class="p_actions" id="delete_employee_{{item.id_employee}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Classe do tipo de usuário</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="usertype-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_user_type" id="id_user_type"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="description" value="" class="input-value semBack-white" id="form_description_usertype" placeholder="Digite a descrição:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-usertype" name="button" class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_usertype %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_user_type}}</td>
+                <td class="Margin_Padding">{{ item.description }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_usertype p_actions"
+                    data-id="{{ item.id_user_type }}"
+                    data-description="{{ item.description }}">
+                    Editar
+                    </p>
+                    <hr>
+                    <p class="p_actions" id="delete_usertype_{{item.id_user_type}}">Excluir</p>
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -49,8 +164,155 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
+    <!-- POPUP EDITAR FUNCIONÁRIO -->
+    <div id="popup_edit_employee" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Funcionário</h3>
+                <span class="close_popup_employee">&times;</span>
+            </div>
+
+            <form id="form_edit" action="funcionario-gerenciamento" method="post">
+                <input type="hidden" name="id_employee" id="edit_id_employee">
+
+                <label>Nome</label>
+                <input type="text" name="name" id="edit_name">
+
+                <label>CPF</label>
+                <input type="text" name="cpf" id="edit_cpf">
+
+                <label>Cargo</label>
+                <input type="text" name="job" id="edit_job">
+
+                <label>Salário</label>
+                <input type="number" step="0.01" name="salary" id="edit_salary">
+
+                <label>Horas de trabalho semanais</label>
+                <input type="number" name="weekly_hours" id="edit_hours">
+
+                <label>Data de entrada</label>
+                <input type="date" name="hire_date" id="edit_hire_date">
+
+                <label>Local de trabalho</label>
+                <select name="crop_location" id="edit_location"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- POPUP EDITAR TIPO DE USUÁRIO -->
+    <div id="popup_edit_usertype" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Tipo de Usuário</h3>
+                <span class="close_popup_usertype">&times;</span>
+            </div>
+
+            <form id="form_edit_usertype" action="usertype-gerenciamento" method="post">
+                <input type="hidden" name="id_user_type" id="edit_id_usertype">
+
+                <label>Descrição</label>
+                <input type="text" name="description" id="edit_description_usertype">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE DELEÇÃO -->
+    <div id="deleteConfirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+            <h3 id="modalTitle">Confirmação de Deleção</h3>
+            <p id="modalBody">Deseja realmente deletar este item?</p>
+
+            <button id="confirmDeleteButton" style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">
+                Deletar
+            </button>
+            <button id="cancelDeleteButton" style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== POPUP EDITAR FUNCIONÁRIO =====
+        const popupEmployeeEdit = document.getElementById("popup_edit_employee");
+        const closePopupEmployeeEdit = document.querySelector(".close_popup_employee");
+
+        // Abrir popup ao clicar em "Editar"
+        document.querySelectorAll(".btn_edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_employee").value = btn.dataset.id;
+                document.getElementById("edit_name").value = btn.dataset.name;
+                document.getElementById("edit_cpf").value = btn.dataset.cpf;
+                document.getElementById("edit_job").value = btn.dataset.job;
+                document.getElementById("edit_salary").value = btn.dataset.salary;
+                document.getElementById("edit_hours").value = btn.dataset.hours;
+                document.getElementById("edit_hire_date").value = btn.dataset.hire_date;
+
+                // Preencher select de locais
+                const list_locations = {{ locations | tojson }};
+                const location_employee = document.getElementById("edit_location");
+                const selected_id_location = btn.dataset.location_id;
+                location_employee.innerHTML = list_locations.map(l =>
+                    `<option style="color: white" value="${l.id_crop}" ${l.id_crop == selected_id_location ? 'selected' : ''}>${l.description}</option>`
+                ).join('');
+
+                console.log("Editando funcionário - Id: " + btn.dataset.id);
+
+                popupEmployeeEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup ao clicar no X
+        closePopupEmployeeEdit.onclick = () => popupEmployeeEdit.style.display = "none";
+
+        // ===== POPUP EDITAR TIPO DE USUÁRIO =====
+        const popupUsertypeEdit = document.getElementById("popup_edit_usertype");
+        const closePopupUsertypeEdit = document.querySelector(".close_popup_usertype");
+
+        // Abrir popup ao clicar em "Editar" tipo de usuário
+        document.querySelectorAll(".btn_edit_usertype").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_usertype").value = btn.dataset.id;
+                document.getElementById("edit_description_usertype").value = btn.dataset.description;
+
+                console.log("Editando tipo de usuário - Id: " + btn.dataset.id);
+
+                popupUsertypeEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup tipo de usuário ao clicar no X
+        closePopupUsertypeEdit.onclick = () => popupUsertypeEdit.style.display = "none";
+
+        // ===== FECHAR POPUPS AO CLICAR FORA =====
+        window.addEventListener("click", (e) => {
+            if (e.target == popupEmployeeEdit) popupEmployeeEdit.style.display = "none";
+            if (e.target == popupUsertypeEdit) popupUsertypeEdit.style.display = "none";
+        });
+
+        // ===== PREENCHER SELECTS INICIAIS =====
+        document.getElementById("form_location_employee").innerHTML = `
+            {% for location in locations %}
+                <option value="{{ location.id_crop }}">{{ location.name }}</option>
+            {% endfor %}
+        `;
+
+        // ===== TEMA =====
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
+            } else {
+                localStorage.setItem("theme", "dark");
+            }
+            location.reload();
+        });
+    </script>
 
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
 </body>
 
 </html>
