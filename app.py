@@ -335,7 +335,6 @@ def funcionario_gerenciamento():
                 query = "DELETE FROM employees WHERE id_employee = %s;"
                 cursor.execute(query, (id_val,))
                 db.commit()
-                print(f"✅ Funcionário com ID {id_val} deletado com sucesso!")
 
         elif button in ("Editar", "Salvar"):
             # UPDATE funcionário
@@ -354,10 +353,9 @@ def funcionario_gerenciamento():
                 params = (name, cpf, job, salary_val, weekly_hours_val, hire_date, crop_location_val, id_val)
                 cursor.execute(query, params)
                 db.commit()
-                print(f"✅ Funcionário ID {id_val} atualizado com sucesso!")
 
     except Exception as e:
-        print(f"❌ Erro em funcionario_gerenciamento: {e}")
+        pass
     finally:
         try:
             db.close()
@@ -387,7 +385,6 @@ def usertype_gerenciamento():
             query = "INSERT INTO usertype (DESCRIPTION) VALUES (%s);"
             cursor.execute(query, (description,))
             db.commit()
-            print(f"✅ Tipo de usuário '{description}' adicionado com sucesso!")
 
         elif button in ("Remover", "Excluir"):
             # DELETE tipo de usuário
@@ -395,7 +392,6 @@ def usertype_gerenciamento():
                 query = "DELETE FROM usertype WHERE id_user_type = %s;"
                 cursor.execute(query, (id_val,))
                 db.commit()
-                print(f"✅ Tipo de usuário ID {id_val} deletado com sucesso!")
 
         elif button in ("Editar", "Salvar"):
             # UPDATE tipo de usuário
@@ -403,10 +399,9 @@ def usertype_gerenciamento():
                 query = "UPDATE usertype SET DESCRIPTION = %s WHERE id_user_type = %s;"
                 cursor.execute(query, (description, id_val))
                 db.commit()
-                print(f"✅ Tipo de usuário ID {id_val} atualizado com sucesso!")
 
     except Exception as e:
-        print(f"❌ Erro em usertype_gerenciamento: {e}")
+        pass
     finally:
         try:
             db.close()
