@@ -87,3 +87,64 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
+
+
+        table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #8c8c8c;
+    padding: 8px;
+}
+
+th {
+    color: rgb(0, 0, 0);
+    background-color: #ffffff00;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    color: #000000;
+    border: 1px solid #000000;
+    padding: 8px;
+}
+
+.button-submit {
+    padding: 6px 12px;
+    background-color: #1e90ff;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+}
+
+.input-value {
+    text-align: center;
+    width: 100%;
+    padding: 6px;
+}
+
+.btn-editar {
+    color: #1e90ff;
+    cursor: pointer;
+}
+
+.semBack-white{
+    background-color: #00000000;
+    color: #000000;
+    border: 0;
+}
+
+option{
+    color: black;
+}
+
+.p_actions{
+            cursor: pointer;
+        }

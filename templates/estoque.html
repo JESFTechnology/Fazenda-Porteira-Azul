@@ -4,7 +4,7 @@
 <head id="head">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css" id="stylesheet_body">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
     <link rel="stylesheet" href="./../static/css/popup_editar.css">
     <link rel="stylesheet" href="./../static/css/dark-style-estoque.css"
@@ -19,6 +19,8 @@
         <a href="estoque">Estoque</a>
         <a href="funcionario">Funcionários</a>
         <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -88,40 +90,98 @@
             {% endfor %}
 
         </table>
+        <br>
+        <h1>Locais de estoque</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome do local</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="estoque-local-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage_local"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="nome_local" value="" class="input-value semBack-white" id="nome_local" placeholder="Digite aqui o local: ">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_local" name="button" class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            
+            {% for item in list_storage_local %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_storage_location}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_local p_actions"
+                    data-id="{{ item.id_storage_location }}" data-name="{{ item.name }}">
+                    Editar
+                    </p>
+                    <hr>
+                    <p class="p_actions" id="delete_local_storage_{{item.id_storage_location}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+        <br>
     </section>
 
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <div id="popup_edit" class="popup">
-        <div class="popup_content">
-            <div class="popup_header">
-                <h3>Editar Armazenamento</h3>
-                <span id="close_popup">&times;</span>
-            </div>
-
-            <form id="form_edit" action="estoque-gerenciamento" method="post">
-                <input type="hidden" name="id_storage" id="edit_id">
-
-                <label>Produto / Grãos</label>
-                <select name="grain" id="edit_grain" id="edit_grain"></select>
-
-                <label>Sacos / 60Kg</label>
-                <input type="number" name="amount" id="edit_quantity_bags">
-
-                <label>Local</label>
-                <select name="location" id="edit_local"></select>
-
-                <input type="submit" class="btn-save-popup" value="Editar" name="button">
-            </form>
+    <div id="popup_edit_storage" class="popup">
+    <div class="popup_content">
+        <div class="popup_header">
+            <h3>Editar Armazenamento</h3>
+            <span class="close_popup_storage">&times;</span>
         </div>
+
+        <form id="form_edit" action="estoque-gerenciamento" method="post">
+            <input type="hidden" name="id_storage" id="edit_id_storage">
+
+            <label>Produto / Grãos</label>
+            <select name="grain" id="edit_grain"></select>
+
+            <label>Sacos / 60Kg</label>
+            <input type="number" name="amount" id="edit_quantity_bags">
+
+            <label>Local</label>
+            <select name="location" id="edit_local"></select>
+
+            <input type="submit" class="btn-save-popup" value="Editar" name="button">
+        </form>
     </div>
+</div>
+
+
+    <div id="popup_edit_local" class="popup">
+    <div class="popup_content">
+        <div class="popup_header">
+            <h3>Editar Local</h3>
+            <span class="close_popup_local">&times;</span>
+        </div>
+
+        <form id="form_edit_local" action="estoque-local-gerenciamento" method="post">
+            <input type="hidden" name="id_storage" id="edit_id_local">
+
+            <label>Nome do local</label>
+            <input type="text" name="nome_local" id="edit_local_name">
+
+            <input type="submit" class="btn-save-popup" value="Editar" name="button">
+        </form>
+    </div>
+</div>
+
 
     <script>
         /*popup inicio*/
 
-        const popup = document.getElementById("popup_edit");
+        const popup = document.getElementById("popup_edit_storage");
         const closePopup = document.getElementById("close_popup");
 
         document.querySelectorAll(".btn_edit").forEach(btn => {
@@ -184,6 +244,59 @@
             });
         });
 
+
+        /*popup inicio*/
+
+        const popup_local = document.getElementById("popup_edit_local");
+        const closePopup_local = document.getElementById("close_popup_local");
+
+        document.querySelectorAll(".btn_edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+            document.getElementById("edit_id").value = btn.dataset.id;
+            console.log("Id: "+btn.dataset.id+" | Name: "+btn.dataset.name)
+
+            document.getElementById("edit_local_name").value = btn.dataset.name;
+
+            popup.style.display = "block";
+            });
+        });
+
+        closePopup.onclick = () => popup.style.display = "none";
+        window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
+
+        /*popup fim*/
+        document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
+            item.addEventListener("click", event => {
+                const id = item.id.split("_")[2];
+                if (id) {
+                    const id_storage = document.getElementById("id_storage");
+                    id_storage.value = id;
+
+                    const amount_storage = document.getElementById("amount_storage")
+                    amount_storage.value = parseInt(document.getElementById(`quantity_bags_${id}`).innerText);
+                    
+                    
+                    const btn_submit = document.getElementById("btn-submit");
+                    btn_submit.value = "Editar";
+
+                    const list_grains = {{ list_grains | tojson }};
+                    const grain_storage = document.getElementById("form_grain_storage");
+                    const selected_id_grain = parseInt(item.id.split("_")[3]);
+                    grain_storage.innerHTML = list_grains.map(g =>
+                        `<option value="${g.id_grain}" ${g.id_grain === selected_id_grain ? 'selected' : ''}>${g.name}</option>`
+                    ).join('');
+
+                    const list_locations = {{ locations | tojson }};
+                    const local_storage = document.getElementById("form_local_storage");
+                    const selected_id_local = parseInt(item.id.split("_")[4]);
+                    local_storage.innerHTML = list_locations.map(l =>
+                        `<option value="${l.id_storage_location}" ${l.id_storage_location === selected_id_local ? 'selected' : ''}>${l.name}</option>`
+                    ).join('');
+                }
+            });
+        });
+
+
         document.getElementById("form_grain_storage").innerHTML = `
             {% for grain in list_grains %}
                 <option value="{{ grain.id_grain }}">{{ grain.name }}</option>
@@ -210,6 +323,25 @@
             });
         });
 
+        document.querySelectorAll("[id^='delete_local_storage_']").forEach(item => {
+            item.addEventListener("click", event => {
+                const conf = confirm("Deseja realmente deletar esse local de estoque?")
+                const id = item.id.split("_")[3];
+                if (id !== null && conf) {
+                    const id_storage = document.getElementById("id_storage_local");
+                    id_storage.value = id;
+                    const btn_submit = document.getElementById("btn-submit_local");
+                    btn_submit.value = "Remover";
+                    btn_submit.click();
+                }
+            });
+        });
+
+
+
+
+
+
         document.getElementById("theme").addEventListener("click", () => {
             if (localStorage.getItem("theme") === "dark") {
                 localStorage.setItem("theme", "light");
@@ -218,23 +350,9 @@
             }
             location.reload();
         });
-
-        console.log(localStorage.getItem("theme"))
-        if (localStorage.getItem("theme") == "dark") {
-            console.log("Dark mode activated");
-            document.getElementById("theme").innerText = "Tema: Escuro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/dark-style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/dark-style-estoque.css')}}`;
-        } else {
-            document.getElementById("theme").innerText = "Tema: Claro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/style-estoque.css')}}`;
-        }
     </script>
+
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 </body>
 
 </html>

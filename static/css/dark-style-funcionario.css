@@ -44,3 +44,7 @@ option{
     color: white;
     text-decoration: none;
 }
+
+.p_actions{
+            cursor: pointer;
+        }

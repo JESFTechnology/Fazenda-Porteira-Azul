@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
+    <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <title>Fazenda Porteira Azul</title>
+
+</head>
+
+<body>
+    <header>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
+        <a id="theme">Tema: </a>
+    </header>
+
+    <section>
+        <h1>Grãos</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="type" value="" class="input-value semBack-white" id="type">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_grains %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_grain}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">{{ item.type }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Custo dos materiais</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Custo por Kg</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="model" value="" class="input-value semBack-white" id="model">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="year" value="" class="input-value semBack-white" id="year">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_costtypes %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_cost_type }}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">R${{ item.cost_value }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Custo de Produção</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Data de custo</th>
+                <th>Descrição</th>
+                <th>Tipo do custo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="id_machinery_fk" id="id_machinery_fk" class="input-value semBack-white">
+                            {% for item in machinery_list %}
+                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_productioncosts %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_production_cost}}</td>
+                <td class="Margin_Padding">{{ item.cost_date }}</td>
+                <td class="Margin_Padding">{{ item.description }}</td>
+                <td class="Margin_Padding">{{ item.cost_type_fk }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <footer>
+        <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
+    </footer>
+
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 from src.database import DatabaseConnection
+from src.web import money_coffe_requests
 from flask import Flask, jsonify, render_template, session, request, redirect, url_for
 
 app = Flask(__name__)
@@ -96,12 +97,14 @@ def estoque():
     grains = cursor.fetchall()
     for grain in grains:
         list_grains.append({"id_grain": grain[0], "name": grain[1] + " " + grain[2]})
+
     db.close()
     return render_template(
         "estoque.html",
         list_storage=list_storage,
         locations=locations,
         list_grains=list_grains,
+        list_storage_local=locations,
     )
 
 
@@ -142,6 +145,37 @@ def estoque_gerenciamento():
     return redirect("/estoque")
 
 
+@app.route("/estoque-local-gerenciamento", methods=["POST"])
+def estoque_local_gerenciamento():
+    id = request.form.get("id_storage")
+    nome_local = request.form.get("nome_local")
+    button = request.form.get("button")
+    if button == "Adicionar":
+        db.connect()
+        cursor = db.get_cursor()
+        query = f"INSERT INTO storagelocations (name) VALUES ('{nome_local}');"
+        cursor.execute(query)
+        db.commit()
+        db.close()
+        print(query)
+    elif button == "Remover":
+        print("Removendo local de estoque...")
+        if id is not None:
+            print(f"ID to remove: {id}")
+            db.connect()
+            cursor = db.get_cursor()
+            query = (
+                f"DELETE FROM storagelocations WHERE id_storage_location = {int(id)};"
+            )
+            cursor.execute(query)
+            db.commit()
+            db.close()
+            print(query)
+        else:
+            print("ID is None, cannot remove storage location.")
+    return redirect("/estoque")
+
+
 @app.route("/funcionario", methods=["GET"])
 def funcionario():
     try:
@@ -178,21 +212,198 @@ def maquinario():
     query = """
     SELECT id_machinery_usage, usage_date, hours_usage, fuel_consumed, observation, CONCAT(m.model," / ",m.`year`)AS machinery, e.name AS employees FROM machineryusage AS mu INNER JOIN machinery AS m ON mu.id_machinery_fk = m.id_machinery INNER JOIN employees AS e ON e.id_employee = mu.id_employee_fk;"""
     cursor.execute(query)
-    list_machinery = []
+    list_machineryusage = []
     machineries = cursor.fetchall()
     for machinery in machineries:
-        list_machinery.append(
+        list_machineryusage.append(
             {
                 "id_machinery_usage": machinery[0],
                 "usage_date": machinery[1],
                 "hours_usage": machinery[2],
                 "fuel_consumed": machinery[3],
                 "observation": machinery[4],
-                "machinery":machinery[5],
-                "employees":machinery[6]
+                "machinery": machinery[5],
+                "employees": machinery[6],
             }
         )
-    return render_template("maquinario.html", list_machinery=list_machinery)
+
+    query = """
+    SELECT id_machinery_brand, name FROM machinerybrand;"""
+    cursor.execute(query)
+
+    list_machinerybrand = []
+    machinerybrandies = cursor.fetchall()
+    for machinerybrand in machinerybrandies:
+        list_machinerybrand.append(
+            {"id_machinery_brand": machinerybrand[0], "name": machinerybrand[1]}
+        )
+    list_id_machinery_type = []
+
+    query = """
+    SELECT id_machinery_type, name FROM machinerytype;"""
+    cursor.execute(query)
+
+    machinerytypes = cursor.fetchall()
+    for machinerytype in machinerytypes:
+        list_id_machinery_type.append(
+            {"id_machinery_type": machinerytype[0], "name": machinerytype[1]}
+        )
+
+    list_machinery = []
+    query = """
+    SELECT id_machinery, model, `year`, total_worked_hours, total_fuel_consumption, mb.name AS machinery_brand, mt.name AS machinery_type FROM machinery 
+INNER JOIN machinerybrand AS mb ON machinery.id_machinery_brand_fk = mb.id_machinery_brand
+INNER JOIN machinerytype AS mt ON machinery.id_machinery_type_fk = mt.id_machinery_type;"""
+    cursor.execute(query)
+    machineries = cursor.fetchall()
+    for machinery in machineries:
+        list_machinery.append(
+            {
+                "id_machinery": machinery[0],
+                "model": machinery[1],
+                "year": machinery[2],
+                "total_worked_hours": machinery[3],
+                "total_fuel_consumption": machinery[4],
+                "machinery_brand_fk": machinery[5],
+                "machinery_type_fk": machinery[6],
+            }
+        )
+
+    query = """SELECT id_employee, name FROM employees;"""
+    cursor.execute(query)
+    employees = cursor.fetchall()
+    employee_list = []
+    for employee in employees:
+        employee_list.append({"name": employee[1], "id_employee": employee[0]})
+
+    query = """SELECT id_machinery, CONCAT(model,' / ',year) FROM machinery;"""
+    cursor.execute(query)
+    machinerybrands = cursor.fetchall()
+    machinery_list = []
+    for machinerybrand in machinerybrands:
+        machinery_list.append(
+            {"model": machinerybrand[1], "id_machinery": machinerybrand[0]}
+        )
+    db.close()
+    return render_template(
+        "maquinario.html",
+        machinery_list=machinery_list,
+        employee_list=employee_list,
+        list_machinery=list_machinery,
+        list_machineryusage=list_machineryusage,
+        list_machinerybrand=list_machinerybrand,
+        list_id_machinery_type=list_id_machinery_type,
+    )
+
+
+@app.route("/producao", methods=["GET"])
+def producao():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+
+    query = """SELECT * FROM grains;"""
+    cursor.execute(query)
+    list_grains = []
+    grains = cursor.fetchall()
+
+    for grain in grains:
+        list_grains.append({"id_grain": grain[0], "name": grain[1], "type": grain[2]})
+
+    query = """SELECT * FROM costtypes;"""
+    cursor.execute(query)
+    list_costtypes = []
+    costtypes = cursor.fetchall()
+
+    for costtype in costtypes:
+        list_costtypes.append(
+            {
+                "id_cost_type": costtype[0],
+                "name": costtype[1],
+                "cost_value": costtype[2],
+            }
+        )
+
+    query = """SELECT p.id_production_cost, p.cost_date, p.description, c.name FROM productioncosts AS p INNER JOIN costtypes AS c on p.id_cost_type_fk = c.id_cost_type;"""
+    cursor.execute(query)
+    list_productioncosts = []
+    productioncosts = cursor.fetchall()
+
+    for productioncost in productioncosts:
+        list_productioncosts.append(
+            {
+                "id_production_cost": productioncost[0],
+                "cost_date": productioncost[1],
+                "description": productioncost[2],
+                "cost_type_fk": productioncost[3],
+            }
+        )
+
+    db.close()
+    return render_template(
+        "producao.html",
+        list_grains=list_grains,
+        list_costtypes=list_costtypes,
+        list_productioncosts=list_productioncosts,
+    )
+
+
+@app.route("/bolsa", methods=["GET"])
+def bolsa():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    query = """SELECT m.id_market_quotes,m.price_per_bag,m.quote_date,m.observation,CONCAT(g.name,' - ',g.type) FROM marketquotes AS m INNER JOIN grains AS g ON m.id_grain_fk = g.id_grain;"""
+    cursor.execute(query)
+    list_marketquotes = []
+    marketquotes = cursor.fetchall()
+    for marketquote in marketquotes:
+        list_marketquotes.append(
+            {
+                "id_market_quotes": marketquote[0],
+                "price_per_bag": marketquote[1],
+                "quote_date": marketquote[2],
+                "observation": marketquote[3],
+                "grain": marketquote[4],
+            }
+        )
+    return render_template("bolsa.html", cotacao=money_coffe_requests(),list_marketquotes=list_marketquotes)
+
+
+@app.route("/maquinario-gerenciamento", methods=["GET"])
+def maquinario_gerenciamento():
+    id = request.form.get("id_machinery_usage")
+    usage_date = request.form.get("usage_date")
+    hours_usage = request.form.get("hours_usage")
+    fuel_consumed = request.form.get("fuel_consumed")
+    observation = request.form.get("observation")
+    id_machinery_fk = request.form.get("id_machinery_fk")
+    id_employee_fk = request.form.get("id_employee_fk")
+    button = request.form.get("button")
+    if button == "Adicionar":
+        db.connect()
+        cursor = db.get_cursor()
+        query = f"INSERT INTO machineryusage (usage_date, hours_usage, fuel_consumed, observation, id_machinery_fk, id_employee_fk) VALUES ('{usage_date}', {int(hours_usage)}, {float(fuel_consumed)}, '{observation}', {int(id_machinery_fk)}, {int(id_employee_fk)});"
+        cursor.execute(query)
+        db.commit()
+        db.close()
+        print(query)
+    elif button == "Remover":
+        if id is not None:
+            db.connect()
+            cursor = db.get_cursor()
+            query = f"DELETE FROM machineryusage WHERE id_machinery_usage = {int(id)};"
+            cursor.execute(query)
+            db.commit()
+            db.close()
+            print(query)
+        else:
+            print("ID is None, cannot remove machinery usage item.")
+    return redirect("/maquinario")
 
 
 @app.route("/exit", methods=["GET"])
@@ -212,6 +423,12 @@ def get_data():
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# 404 Error Handler
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("erro404.html", msg="Página não encontrada."), 404
 
 
 if __name__ == "__main__":

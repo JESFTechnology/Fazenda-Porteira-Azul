@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
     <title>Fazenda Porteira Azul</title>
 
@@ -16,6 +16,8 @@
         <a href="estoque">Estoque</a>
         <a href="funcionario">Funcionários</a>
         <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -33,18 +35,36 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="estoque-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
                     <td class="Margin_Padding">
-                        <input type="date">
+                        <input type="date" name="usage_date" id="usage_date">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="number" name="amount" value="0" class="input-value semBack-white"
-                            id="amount_storage">
+                        <input type="number" name="hours_usage" value="0" class="input-value semBack-white"
+                            id="hours_usage">
                     </td>
                     <td class="Margin_Padding">
-                        <select name="location" id="form_local_storage" class="input-value semBack-white"></select>
+                        <input type="number" name="fuel_consumed" value="0" class="input-value semBack-white"
+                            id="fuel_consumed">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="observation" value="" class="input-value semBack-white" id="observation">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="id_machinery_fk" id="id_machinery_fk" class="input-value semBack-white">
+                            {% for item in machinery_list %}
+                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="id_employee_fk" id="id_employee_fk" class="input-value semBack-white">
+                            {% for item in employee_list %}
+                            <option value="{{ item.id_employee }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td class="Margin_Padding">
                         <input type="submit" value="Adicionar" id="btn-submit" name="button"
@@ -52,7 +72,7 @@
                     </td>
                 </form>
             </tr>
-            {% for item in list_machinery %}
+            {% for item in list_machineryusage %}
             <tr>
                 <td class="Margin_Padding">{{ item.id_machinery_usage}}</td>
                 <td class="Margin_Padding">{{ item.usage_date }}</td>
@@ -69,29 +89,143 @@
             </tr>
             {% endfor %}
         </table>
+        <br>
+        <h1>Maquinário</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Total de horas trabalhadas</th>
+                <th>Total de combustivel consumido</th>
+                <th>Marca do maquinário</th>
+                <th>Tipo do maquinário</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="model" value="" class="input-value semBack-white" id="model">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="year" value="" class="input-value semBack-white" id="year">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="total_worked_hours" value="" class="input-value semBack-white"
+                            id="total_worked_hours">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="total_fuel_consumption" value="" class="input-value semBack-white"
+                            id="total_fuel_consumption">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="grain" id="" class="input-value semBack-white">
+                            <option value="teste">Teste</option>
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="grain" id="employee" class="input-value semBack-white">
+                            <option value=""></option>
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_machinery %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery }}</td>
+                <td class="Margin_Padding">{{ item.model }}</td>
+                <td class="Margin_Padding">{{ item.year }}</td>
+                <td class="Margin_Padding">{{ item.total_worked_hours }}</td>
+                <td class="Margin_Padding">{{ item.total_fuel_consumption }}</td>
+                <td class="Margin_Padding">{{ item.machinery_brand_fk }}</td>
+                <td class="Margin_Padding">{{ item.machinery_type_fk }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Máquinas</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_machinerybrand %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_brand}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Tipos de máquinas</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_id_machinery_type %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_type}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">
+                    <p id="">Editar</p>
+                    <hr>
+                    <p id="">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </section>
 
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <script>
-        console.log(localStorage.getItem("theme"))
-        if (localStorage.getItem("theme") == "dark") {
-            console.log("Dark mode activated");
-            document.getElementById("theme").innerText = "Tema: Escuro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/dark-style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/dark-style-estoque.css')}}`;
-        } else {
-            document.getElementById("theme").innerText = "Tema: Claro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/style-estoque.css')}}`;
-        }
-    </script>
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 
 </body>
 

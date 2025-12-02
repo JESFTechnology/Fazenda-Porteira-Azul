@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-funcionario.css">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
     <title>Fazenda Porteira Azul</title>
@@ -16,6 +16,8 @@
         <a href="estoque">Estoque</a>
         <a href="funcionario">Funcionários</a>
         <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -45,25 +47,8 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <script>
 
-        console.log(localStorage.getItem("theme"))
-        if (localStorage.getItem("theme") == "dark") {
-            console.log("Dark mode activated");
-            document.getElementById("theme").innerText = "Tema: Escuro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/dark-style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/dark-style-estoque.css')}}`;
-        } else {
-            document.getElementById("theme").innerText = "Tema: Claro";
-            document.getElementById("stylesheet_body").href =
-                `{{url_for('static', filename='css/style.css')}}`;
-            document.getElementById("stylesheet_body_storage").href =
-                `{{url_for('static', filename='css/style-estoque.css')}}`;
-        }
-    </script>
-
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 </body>
 
 </html>

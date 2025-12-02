@@ -18,3 +18,7 @@ th {
 option{
     color: black;
 }
+
+.p_actions{
+            cursor: pointer;
+        }
