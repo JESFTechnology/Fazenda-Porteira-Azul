@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/dark-popup.css')}}">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Fazenda Porteira Azul</title>
 
@@ -39,7 +40,7 @@
             <tr>
                 <form action="maquinario-gerenciamento-uso" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
+                        0<input type="hidden" value="" name="id_machinery_usage" id="id_machinery_usage"></td>
                     <td class="Margin_Padding">
                         <input type="date" name="usage_date" id="usage_date">
                     </td>
@@ -114,7 +115,7 @@
             <tr>
                 <form action="maquinario-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_machinery" id="id_machinery"></td>
+                        0<input type="hidden" value="" name="id_machinery" id="id_machinery"></td>
                     <td class="Margin_Padding">
                         <input type="text" name="model" value="" class="input-value semBack-white" id="model">
                     </td>
@@ -264,6 +265,229 @@
 
         </div>
     </div>
+
+    <!-- Popup de edição de Maquinario -->
+    <div id="popup_edit_machinery" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Maquinário</h3>
+                <span class="close_popup_machinery">&times;</span>
+            </div>
+            <form id="form_edit_machinery" action="maquinario-gerenciamento" method="post">
+                <input type="hidden" name="id_machinery" id="edit_id_machinery" />
+                <label>Modelo</label>
+                <input type="text" name="model" id="edit_model" />
+                <label>Ano</label>
+                <input type="number" name="year" id="edit_year" />
+                <label>Horas Trabalhadas</label>
+                <input type="number" step="0.01" name="total_worked_hours" id="edit_total_worked_hours" />
+                <label>Consumo de Combustível</label>
+                <input type="number" step="0.01" name="total_fuel_consumption" id="edit_total_fuel_consumption" />
+                <label>Marca</label>
+                <select name="brand" id="edit_brand"></select>
+                <label>Tipo</label>
+                <select name="type" id="edit_type"></select>
+                <input type="submit" value="Salvar" id="btn-submit" name="button"
+                    class="btn-submit input-value semBack-white">
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup de edição de Uso de Maquinario -->
+    <div id="popup_edit_machinery_usage" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Uso de Maquinário</h3>
+                <span class="close_popup_usage">&times;</span>
+            </div>
+            <form id="form_edit_usage" action="maquinario-gerenciamento-uso" method="post">
+                <input type="hidden" name="id_machinery_usage" id="edit_id_machinery_usage" />
+                <label>Data de Uso</label>
+                <input type="date" name="usage_date" id="edit_usage_date" />
+                <label>Horas</label>
+                <input type="number" step="0.01" name="hours_usage" id="edit_hours_usage" />
+                <label>Combustível Gasto</label>
+                <input type="number" step="0.01" name="fuel_consumed" id="edit_fuel_consumed" />
+                <label>Observações</label>
+                <input type="text" name="observation" id="edit_observation" />
+                <label>Máquina</label>
+                <select name="id_machinery_fk" id="edit_id_machinery_fk"></select>
+                <label>Funcionário</label>
+                <select name="id_employee_fk" id="edit_id_employee_fk"></select>
+                <input type="submit" value="Salvar" id="btn-submit" name="button"
+                    class="btn-submit input-value semBack-white">
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup de edição de Marca de Maquinario -->
+    <div id="popup_edit_brand" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Marca de Maquinário</h3>
+                <span class="close_popup_brand">&times;</span>
+            </div>
+            <form id="form_edit_brand" action="maquinario-gerenciamento-brand" method="post">
+                <input type="hidden" name="id_machinery_brand" id="edit_id_machinery_brand" />
+                <label>Nome da Marca</label>
+                <input type="text" name="name" id="edit_brand_name" />
+                <input type="submit" value="Salvar" id="btn-submit" name="button"
+                    class="btn-submit input-value semBack-white">
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup de edição de Tipo de Maquinario -->
+    <div id="popup_edit_type" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Tipo de Maquinário</h3>
+                <span class="close_popup_type">&times;</span>
+            </div>
+            <form id="form_edit_type" action="maquinario-gerenciamento-type" method="post">
+                <input type="hidden" name="id_machinery_type" id="edit_id_machinery_type" />
+                <label>Nome do Tipo</label>
+                <input type="text" name="name" id="edit_type_name" />
+                <input type="submit" value="Salvar" id="btn-submit" name="button"
+                    class="btn-submit input-value semBack-white">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Helpers
+            const addShow = el => el && el.classList.add("show");
+            const removeShow = el => el && el.classList.remove("show");
+            const toggleShow = el => el && el.classList.toggle("show");
+
+            // copia opções de um select para outro
+            function cloneOptions(fromSelector, toSelector) {
+                const from = document.querySelector(fromSelector);
+                const to = document.querySelector(toSelector);
+                if (!from || !to) return;
+                to.innerHTML = ""; // limpa antes
+                Array.from(from.options).forEach(opt => {
+                    const newOpt = opt.cloneNode(true);
+                    to.appendChild(newOpt);
+                });
+            }
+
+            // Popups e selects que precisam de clone
+            cloneOptions("select[name='id_machinery_fk']", "#edit_id_machinery_fk");
+            cloneOptions("select[name='id_employee_fk']", "#edit_id_employee_fk");
+            cloneOptions("select[name='brand']", "#edit_brand");
+            cloneOptions("select[name='type']", "#edit_type");
+
+            // Seletores genéricos para popups
+            const popupMachinery = document.getElementById("popup_edit_machinery");
+            const popupUsage = document.getElementById("popup_edit_machinery_usage");
+            const popupBrand = document.getElementById("popup_edit_brand");
+            const popupType = document.getElementById("popup_edit_type");
+
+            // find all close buttons that start with 'close_popup'
+            const closeButtons = Array.from(document.querySelectorAll("[class*='close_popup']"))
+                .filter(el => /close_popup/.test(el.className));
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    // find closest popup ancestor and close it
+                    const p = btn.closest(".popup");
+                    removeShow(p);
+                });
+            });
+
+            // fechar com ESC
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    document.querySelectorAll(".popup.show").forEach(p => removeShow(p));
+                }
+            });
+
+            // fechar clicando fora do conteúdo
+            document.querySelectorAll(".popup").forEach(popup => {
+                popup.addEventListener("click", (e) => {
+                    if (e.target === popup) removeShow(popup);
+                });
+            });
+
+            // ---------- EDIT MAQUINÁRIO ----------
+            document.querySelectorAll(".btn_edit_machinery").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    addShow(popupMachinery);
+
+                    // preencher campos (fallbacks se nome diferente)
+                    const set = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (!el) return;
+                        el.value = (val !== undefined && val !== null) ? val : "";
+                    };
+
+                    set("edit_id_machinery", btn.dataset.id ?? btn.dataset.id_machinery ?? btn.dataset["id_machinery"]);
+                    set("edit_model", btn.dataset.model);
+                    set("edit_year", btn.dataset.year);
+                    set("edit_total_worked_hours", btn.dataset.total_worked_hours ?? btn.dataset.total_worked_hours);
+                    set("edit_total_fuel_consumption", btn.dataset.total_fuel_consumption ?? btn.dataset.total_fuel_consumption);
+
+                    // selects: tentar valores diretos, senão deixar como está
+                    const brandVal = btn.dataset.brand ?? btn.dataset.machinery_brand_fk;
+                    const typeVal = btn.dataset.type ?? btn.dataset.machinery_type_fk;
+                    if (brandVal) document.getElementById("edit_brand").value = brandVal;
+                    if (typeVal) document.getElementById("edit_type").value = typeVal;
+                });
+            });
+
+            // ---------- EDIT USO DE MAQUINÁRIO ----------
+            document.querySelectorAll(".btn_edit_machinery_usage").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    addShow(popupUsage);
+
+                    const set = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (!el) return;
+                        el.value = (val !== undefined && val !== null) ? val : "";
+                    };
+
+                    // alguns data-* no seu HTML parecem repetir id_machinery_usage em vez dos ids corretos.
+                    // usamos vários fallbacks:
+                    set("edit_id_machinery_usage", btn.dataset.id ?? btn.dataset.id_machinery_usage);
+                    set("edit_usage_date", btn.dataset.usage_date ?? btn.dataset.usageDate);
+                    set("edit_hours_usage", btn.dataset.hours_usage ?? btn.dataset.hoursUsage);
+                    set("edit_fuel_consumed", btn.dataset.fuel_consumed ?? btn.dataset.fuelConsumed);
+                    set("edit_observation", btn.dataset.observation ?? btn.dataset.obs);
+
+                    // selects: tentar id_machinery, id_machinery_fk, etc
+                    const machineryVal = btn.dataset.id_machinery ?? btn.dataset.id_machinery_fk ?? btn.dataset.machinery;
+                    const employeeVal = btn.dataset.id_employee ?? btn.dataset.id_employee_fk ?? btn.dataset.employee;
+                    if (machineryVal) document.getElementById("edit_id_machinery_fk").value = machineryVal;
+                    if (employeeVal) document.getElementById("edit_id_employee_fk").value = employeeVal;
+                });
+            });
+
+            // ---------- EDIT MARCA ----------
+            document.querySelectorAll(".btn_edit_brand").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    addShow(popupBrand);
+                    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val ?? ""; };
+                    set("edit_id_machinery_brand", btn.dataset.id ?? btn.dataset.id_machinery_brand);
+                    set("edit_brand_name", btn.dataset.name ?? btn.dataset.brand_name ?? btn.dataset.nome);
+                });
+            });
+
+            // ---------- EDIT TIPO ----------
+            document.querySelectorAll(".btn_edit_type").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    addShow(popupType);
+                    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val ?? ""; };
+                    set("edit_id_machinery_type", btn.dataset.id ?? btn.dataset.id_machinery_type);
+                    set("edit_type_name", btn.dataset.name ?? btn.dataset.type_name ?? btn.dataset.nome);
+                });
+            });
+
+        });
+
+    </script>
 
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
     <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
