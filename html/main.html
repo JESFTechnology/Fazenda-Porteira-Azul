@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <script src="componentes/header.js" type="text/javascript" defer></script>
     <title>Fazenda Porteira Azul</title>
 
@@ -12,10 +12,12 @@
 
 <body>
     <header>
-        <a href="main.html">Início</a>
-        <a href="estoque.html">Estoque</a>
-        <a href="funcionario.html">Funcionários</a>
-        <a href="maquinario.html">Maquinário</a>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -30,6 +32,8 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JESF Technology - LuSiR Databases - LRC WebDev - LuFeSTAP
             Documents </p>
     </footer>
+
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 </body>
 
 </html>

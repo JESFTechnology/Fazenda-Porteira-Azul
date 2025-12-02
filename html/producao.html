@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
+    <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css"> <title>Fazenda Porteira Azul</title>
+
+</head>
+
+<body>
+    <header>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
+        <a id="theme">Tema: </a>
+    </header>
+
+    <section>
+        <h1>Grãos</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="producao-graos-gerenciamento" method="post"> <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_grain" id="id_grain_add"></td> <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_grain_add"> </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="type" value="" class="input-value semBack-white" id="type_grain_add"> </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_grain_add" name="button"
+                            class="btn-submit input-value semBack-white"> </td>
+                </form>
+            </tr>
+            {% for item in list_grains %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_grain}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">{{ item.type }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_grain p_actions"
+                    data-id="{{ item.id_grain }}"
+                    data-name="{{ item.name }}"
+                    data-type="{{ item.type }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_grain_{{item.id_grain}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Custo dos materiais</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Custo por Kg</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="producao-tipocusto-gerenciamento" method="post"> <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_cost_type" id="id_cost_type_add"></td> <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_cost_type_add"> </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="cost_value" value="" class="input-value semBack-white" id="cost_value_add"> </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_cost_type_add" name="button"
+                            class="btn-submit input-value semBack-white"> </td>
+                </form>
+            </tr>
+            {% for item in list_costtypes %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_cost_type }}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">R${{ item.cost_value }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_cost_type p_actions"
+                    data-id="{{ item.id_cost_type }}"
+                    data-name="{{ item.name }}"
+                    data-cost="{{ item.cost_value }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_cost_type_{{item.id_cost_type}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Custo de Produção</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Data de custo</th>
+                <th>Descrição</th>
+                <th>Tipo do custo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="producao-custo-gerenciamento" method="post"> <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_production_cost" id="id_production_cost_add"></td> <td class="Margin_Padding">
+                        <input type="date" name="cost_date" value="" class="input-value semBack-white" id="cost_date_add"> </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="description" value="" class="input-value semBack-white" id="description_add"> </td>
+                    <td class="Margin_Padding">
+                        <select name="id_cost_type_fk" id="id_cost_type_fk_add" class="input-value semBack-white"> {% for item in list_costtypes %}
+                            <option value="{{ item.id_cost_type }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_production_cost_add" name="button"
+                            class="btn-submit input-value semBack-white"> </td>
+                </form>
+            </tr>
+            {% for item in list_productioncosts %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_production_cost}}</td>
+                <td class="Margin_Padding">{{ item.cost_date }}</td>
+                <td class="Margin_Padding">{{ item.description }}</td>
+                <td class="Margin_Padding">{{ item.cost_type_fk }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_production_cost p_actions"
+                    data-id="{{ item.id_production_cost }}"
+                    data-date="{{ item.cost_date }}"
+                    data-desc="{{ item.description }}"
+                    data-type_id="{{ item.id_cost_type_fk }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_production_cost_{{item.id_production_cost}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <div id="popup_edit_grain" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Grão</h3>
+                <span class="close_popup_grain">&times;</span>
+            </div>
+
+            <form id="form_edit_grain" action="producao-graos-gerenciamento" method="post">
+                <input type="hidden" name="id_grain" id="edit_id_grain">
+
+                <label>Nome do Grão</label>
+                <input type="text" name="name" id="edit_grain_name">
+
+                <label>Tipo</label>
+                <input type="text" name="type" id="edit_grain_type">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <div id="popup_edit_cost_type" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Tipo de Custo</h3>
+                <span class="close_popup_cost_type">&times;</span>
+            </div>
+
+            <form id="form_edit_cost_type" action="producao-tipocusto-gerenciamento" method="post">
+                <input type="hidden" name="id_cost_type" id="edit_id_cost_type">
+
+                <label>Nome do Material</label>
+                <input type="text" name="name" id="edit_cost_type_name">
+
+                <label>Custo por Kg (R$)</label>
+                <input type="number" name="cost_value" id="edit_cost_value">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <div id="popup_edit_production_cost" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Custo de Produção</h3>
+                <span class="close_popup_production_cost">&times;</span>
+            </div>
+
+            <form id="form_edit_production_cost" action="producao-custo-gerenciamento" method="post">
+                <input type="hidden" name="id_production_cost" id="edit_id_production_cost">
+
+                <label>Data de Custo</label>
+                <input type="date" name="cost_date" id="edit_cost_date">
+
+                <label>Descrição</label>
+                <input type="text" name="description" id="edit_description">
+
+                <label>Tipo de Custo</label>
+                <select name="id_cost_type_fk" id="edit_cost_type_fk"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
+    </footer>
+
+    <script>
+        // Variáveis de lista (assumindo que são injetadas pelo backend)
+        const list_costtypes = {{ list_costtypes | tojson }};
+        const list_grains = {{ list_grains | tojson }};
+
+        // =========================================================================
+        // 1. GRÃOS
+        // =========================================================================
+
+        const popupGrainEdit = document.getElementById("popup_edit_grain");
+        const closePopupGrainEdit = document.querySelector(".close_popup_grain");
+
+        // Abrir popup Grãos (Editar)
+        document.querySelectorAll(".btn_edit_grain").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_grain").value = btn.dataset.id;
+                document.getElementById("edit_grain_name").value = btn.dataset.name;
+                document.getElementById("edit_grain_type").value = btn.dataset.type;
+                popupGrainEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup Grãos
+        closePopupGrainEdit.onclick = () => popupGrainEdit.style.display = "none";
+
+        // Deletar Grão
+        document.querySelectorAll("[id^='delete_grain_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[2];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_grain_add").value = id;
+                        document.getElementById("btn-submit_grain_add").value = "Remover";
+                        document.getElementById("btn-submit_grain_add").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Grão",
+                        "Você tem certeza que deseja remover este registro de grão permanentemente?",
+                        deleteAction
+                    );
+                }
+            });
+        });
+
+
+        // =========================================================================
+        // 2. CUSTO DOS MATERIAIS (TIPO DE CUSTO)
+        // =========================================================================
+
+        const popupCostTypeEdit = document.getElementById("popup_edit_cost_type");
+        const closePopupCostTypeEdit = document.querySelector(".close_popup_cost_type");
+
+        // Abrir popup Custo dos Materiais (Editar)
+        document.querySelectorAll(".btn_edit_cost_type").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_cost_type").value = btn.dataset.id;
+                document.getElementById("edit_cost_type_name").value = btn.dataset.name;
+                document.getElementById("edit_cost_value").value = btn.dataset.cost;
+                popupCostTypeEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup Custo dos Materiais
+        closePopupCostTypeEdit.onclick = () => popupCostTypeEdit.style.display = "none";
+
+        // Deletar Custo do Material
+        document.querySelectorAll("[id^='delete_cost_type_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[3];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_cost_type_add").value = id;
+                        document.getElementById("btn-submit_cost_type_add").value = "Remover";
+                        document.getElementById("btn-submit_cost_type_add").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Tipo de Custo",
+                        "Você tem certeza que deseja remover este tipo de custo permanentemente?",
+                        deleteAction
+                    );
+                }
+            });
+        });
+
+
+        // =========================================================================
+        // 3. CUSTO DE PRODUÇÃO (REGISTROS)
+        // =========================================================================
+
+        const popupProductionCostEdit = document.getElementById("popup_edit_production_cost");
+        const closePopupProductionCostEdit = document.querySelector(".close_popup_production_cost");
+
+        // Abrir popup Custo de Produção (Editar)
+        document.querySelectorAll(".btn_edit_production_cost").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_production_cost").value = btn.dataset.id;
+                document.getElementById("edit_cost_date").value = btn.dataset.date;
+                document.getElementById("edit_description").value = btn.dataset.desc;
+
+                // Preencher select de Tipos de Custo
+                const costTypeSelect = document.getElementById("edit_cost_type_fk");
+                const selectedTypeId = btn.dataset.type_id;
+                costTypeSelect.innerHTML = list_costtypes.map(t =>
+                    `<option style="color: white;" value="${t.id_cost_type}" ${t.id_cost_type == selectedTypeId ? 'selected' : ''}>${t.name}</option>`
+                ).join('');
+
+                popupProductionCostEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup Custo de Produção
+        closePopupProductionCostEdit.onclick = () => popupProductionCostEdit.style.display = "none";
+
+        // Deletar Custo de Produção (Registro)
+        document.querySelectorAll("[id^='delete_production_cost_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[3];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_production_cost_add").value = id;
+                        document.getElementById("btn-submit_production_cost_add").value = "Remover";
+                        document.getElementById("btn-submit_production_cost_add").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Custo de Produção",
+                        "Você tem certeza que deseja remover este registro de custo permanentemente?",
+                        deleteAction
+                    );
+                }
+            });
+        });
+
+        // =========================================================================
+        // FECHAMENTO E TEMA
+        // =========================================================================
+
+        // Fechar popups ao clicar fora
+        window.addEventListener("click", (e) => {
+            if (e.target == popupGrainEdit) popupGrainEdit.style.display = "none";
+            if (e.target == popupCostTypeEdit) popupCostTypeEdit.style.display = "none";
+            if (e.target == popupProductionCostEdit) popupProductionCostEdit.style.display = "none";
+        });
+
+        // TEMA
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
+            } else {
+                localStorage.setItem("theme", "dark");
+            }
+            location.reload();
+        });
+    </script>
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+
+</body>
+
+</html>

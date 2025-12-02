@@ -4,190 +4,596 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
-    <title>Fazenda Porteira Azul</title>
+    <link rel="stylesheet" href="./../static/css/popup_editar.css"> <title>Fazenda Porteira Azul</title>
 
 </head>
 
 <body>
     <header>
-        <a href="main.html">Início</a>
-        <a href="estoque.html">Estoque</a>
-        <a href="funcionario.html">Funcionários</a>
-        <a href="maquinario.html">Maquinário</a>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
     <section>
+        <h1>Uso do Maquinário</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Data de uso</th>
+                <th>Horas</th>
+                <th>Combustivel Gasto</th>
+                <th>Observações</th>
+                <th>Máquina</th>
+                <th>Funcionário</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-gerenciamento-uso" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage_add"></td>
+                    <td class="Margin_Padding">
+                        <input type="date" name="usage_date" id="usage_date_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="hours_usage" value="0" class="input-value semBack-white"
+                            id="hours_usage_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="number" name="fuel_consumed" value="0" class="input-value semBack-white"
+                            id="fuel_consumed_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="observation" value="" class="input-value semBack-white" id="observation_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="id_machinery_fk" id="id_machinery_fk_add" class="input-value semBack-white">
+                            {% for item in machinery_list %}
+                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="id_employee_fk" id="id_employee_fk_add" class="input-value semBack-white">
+                            {% for item in employee_list %}
+                            <option value="{{ item.id_employee }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_usage" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_machineryusage %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_usage}}</td>
+                <td class="Margin_Padding">{{ item.usage_date }}</td>
+                <td class="Margin_Padding">{{ item.hours_usage }}</td>
+                <td class="Margin_Padding">{{ item.fuel_consumed }}</td>
+                <td class="Margin_Padding">{{ item.observation }}</td>
+                <td class="Margin_Padding">{{ item.machinery }}</td>
+                <td class="Margin_Padding">{{ item.employees }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_usage p_actions"
+                    data-id="{{ item.id_machinery_usage }}"
+                    data-date="{{ item.usage_date }}"
+                    data-hours="{{ item.hours_usage }}"
+                    data-fuel="{{ item.fuel_consumed }}"
+                    data-obs="{{ item.observation }}"
+                    data-machinery_id="{{ item.id_machinery_fk }}"
+                    data-employee_id="{{ item.id_employee_fk }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_usage_{{item.id_machinery_usage}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
         <h1>Maquinário</h1>
         <table>
             <tr>
                 <th>ID</th>
                 <th>Modelo</th>
-                <th>Horas Trabalhadas</th>
-                <th>Combustivel Gasto</th>
+                <th>Ano</th>
+                <th>Total de horas trabalhadas</th>
+                <th>Total de combustivel consumido</th>
+                <th>Marca do maquinário</th>
+                <th>Tipo do maquinário</th>
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="estoque-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                        0<input type="hidden" value="0" name="id_machinery" id="id_machinery_add"></td>
                     <td class="Margin_Padding">
-                        <select name="grain" id="form_grain_storage" class="input-value semBack-white">
-                            <option value="teste">teste</option>
+                        <input type="text" name="model" value="" class="input-value semBack-white" id="model_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="year" value="" class="input-value semBack-white" id="year_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="total_worked_hours" value="" class="input-value semBack-white"
+                            id="total_worked_hours_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="total_fuel_consumption" value="" class="input-value semBack-white"
+                            id="total_fuel_consumption_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <select name="brand" id="brand_add" class="input-value semBack-white">
+                            {% for item in list_machinerybrand %}
+                            <option value="{{item.id_machinery_brand}}">{{item.name}}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td class="Margin_Padding">
-                        <input type="number" name="amount" value="0" class="input-value semBack-white" id="amount_storage">
+                        <select name="type" id="type_add" class="input-value semBack-white">
+                            {% for item in list_id_machinery_type %}
+                            <option value="{{item.id_machinery_type}}">{{item.name}}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td class="Margin_Padding">
-                        <select name="location" id="form_local_storage" class="input-value semBack-white"></select>
-                    </td>
-                    <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button" class="btn-submit input-value semBack-white">
+                        <input type="submit" value="Adicionar" id="btn-submit_machinery" name="button"
+                            class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
-            {% for item in list_storage %}
+            {% for item in list_machinery %}
             <tr>
-                <td class="Margin_Padding">{{ item.id}}</td>
-                <td class="Margin_Padding">{{ item.name }}</td>
-                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
-                <td class="Margin_Padding">{{ item.local }}</td>
+                <td class="Margin_Padding">{{ item.id_machinery }}</td>
+                <td class="Margin_Padding">{{ item.model }}</td>
+                <td class="Margin_Padding">{{ item.year }}</td>
+                <td class="Margin_Padding">{{ item.total_worked_hours }}</td>
+                <td class="Margin_Padding">{{ item.total_fuel_consumption }}</td>
+                <td class="Margin_Padding">{{ item.machinery_brand_fk }}</td>
+                <td class="Margin_Padding">{{ item.machinery_type_fk }}</td>
                 <td class="Margin_Padding">
-                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
+                    <p class="btn_edit_machinery p_actions"
+                    data-id="{{ item.id_machinery }}"
+                    data-model="{{ item.model }}"
+                    data-year="{{ item.year }}"
+                    data-hours="{{ item.total_worked_hours }}"
+                    data-fuel="{{ item.total_fuel_consumption }}"
+                    data-brand_id="{{ item.id_machinery_brand_fk }}"
+                    data-type_id="{{ item.id_machinery_type_fk }}">
+                    Editar</p>
                     <hr>
-                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                    <p class="p_actions" id="delete_machinery_{{item.id_machinery}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Marcas de Máquinas</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_brand_add"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_brand_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_brand" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_machinerybrand %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_brand}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_brand p_actions"
+                    data-id="{{ item.id_machinery_brand }}"
+                    data-name="{{ item.name }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_brand_{{item.id_machinery_brand}}">Excluir</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h1>Tipos de Máquinas</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+            <tr>
+                <form action="maquinario-veiculos-gerenciamento" method="post">
+                    <td class="Margin_Padding">
+                        0<input type="hidden" value="0" name="id_storage" id="id_type_add"></td>
+                    <td class="Margin_Padding">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_type_add">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit_type" name="button"
+                            class="btn-submit input-value semBack-white">
+                    </td>
+                </form>
+            </tr>
+            {% for item in list_id_machinery_type %}
+            <tr>
+                <td class="Margin_Padding">{{ item.id_machinery_type}}</td>
+                <td class="Margin_Padding">{{ item.name }}</td>
+                <td class="Margin_Padding">
+                    <p class="btn_edit_type p_actions"
+                    data-id="{{ item.id_machinery_type }}"
+                    data-name="{{ item.name }}">
+                    Editar</p>
+                    <hr>
+                    <p class="p_actions" id="delete_type_{{item.id_machinery_type}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </section>
 
+    <div id="popup_edit_usage" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Uso do Maquinário</h3>
+                <span class="close_popup_usage">&times;</span>
+            </div>
+
+            <form id="form_edit_usage" action="maquinario-gerenciamento-uso" method="post">
+                <input type="hidden" name="id_machinery_usage" id="edit_id_usage">
+
+                <label>Data de Uso</label>
+                <input type="date" name="usage_date" id="edit_usage_date">
+
+                <label>Horas de Uso</label>
+                <input type="number" name="hours_usage" id="edit_hours_usage">
+
+                <label>Combustível Gasto</label>
+                <input type="number" name="fuel_consumed" id="edit_fuel_consumed">
+
+                <label>Observações</label>
+                <input type="text" name="observation" id="edit_observation">
+
+                <label>Máquina</label>
+                <select name="id_machinery_fk" id="edit_machinery_fk"></select>
+
+                <label>Funcionário</label>
+                <select name="id_employee_fk" id="edit_employee_fk"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <div id="popup_edit_machinery" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Maquinário</h3>
+                <span class="close_popup_machinery">&times;</span>
+            </div>
+
+            <form id="form_edit_machinery" action="maquinario-gerenciamento" method="post">
+                <input type="hidden" name="id_machinery" id="edit_id_machinery">
+
+                <label>Modelo</label>
+                <input type="text" name="model" id="edit_model">
+
+                <label>Ano</label>
+                <input type="text" name="year" id="edit_year">
+
+                <label>Total de Horas Trabalhadas</label>
+                <input type="text" name="total_worked_hours" id="edit_total_worked_hours">
+
+                <label>Total de Combustível Consumido</label>
+                <input type="text" name="total_fuel_consumption" id="edit_total_fuel_consumption">
+
+                <label>Marca do Maquinário</label>
+                <select name="brand" id="edit_brand"></select>
+
+                <label>Tipo do Maquinário</label>
+                <select name="type" id="edit_type"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <div id="popup_edit_brand" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Marca</h3>
+                <span class="close_popup_brand">&times;</span>
+            </div>
+
+            <form id="form_edit_brand" action="maquinario-veiculos-gerenciamento" method="post">
+                <input type="hidden" name="id_storage" id="edit_id_brand">
+
+                <label>Nome da Marca</label>
+                <input type="text" name="name" id="edit_brand_name">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <div id="popup_edit_type" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Tipo de Máquina</h3>
+                <span class="close_popup_type">&times;</span>
+            </div>
+
+            <form id="form_edit_type" action="maquinario-veiculos-gerenciamento" method="post">
+                <input type="hidden" name="id_storage" id="edit_id_type">
+
+                <label>Nome do Tipo</label>
+                <input type="text" name="name" id="edit_type_name">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+
     <footer>
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
     <script>
+        // Variáveis de lista (assumindo que são injetadas pelo backend como no estoque.html)
+        const machinery_list = {{ machinery_list | tojson }};
+        const employee_list = {{ employee_list | tojson }};
+        const list_machinerybrand = {{ list_machinerybrand | tojson }};
+        const list_id_machinery_type = {{ list_id_machinery_type | tojson }};
 
-        var lista = [
-            { id: 1, nome: "João Silva", cargo: "Gerente", salario: 4500 },
-            { id: 2, nome: "Maria Oliveira", cargo: "Assistente Administrativo", salario: 2800 },
-            { id: 3, nome: "Carlos Souza", cargo: "Técnico de Manutenção", salario: 3200 },
-            { id: 4, nome: "Ana Pereira", cargo: "Analista de Marketing", salario: 3600 }
-        ]
+        // =========================================================================
+        //                         1. USO DO MAQUINÁRIO
+        // =========================================================================
 
-        const tabela = document.querySelector("table");
+        const popupUsageEdit = document.getElementById("popup_edit_usage");
+        const closePopupUsageEdit = document.querySelector(".close_popup_usage");
 
-        for (let i = 0; i < lista.length; i++) {
-            tabela.innerHTML += `
-                <tr>
-                    <td>${lista[i].id}</td>
-                    <td>${lista[i].nome}</td>
-                    <td>${lista[i].cargo}</td>
-                    <td>R$ ${lista[i].salario.toFixed(2).replace(".", ",")}</td>
-                    <td><span class="btn-editar" onclick="editar(${lista[i].id})">Editar</span></td>
-                </tr>
-            `;
+        // Abrir popup ao clicar em "Editar" Uso
+        document.querySelectorAll(".btn_edit_usage").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_usage").value = btn.dataset.id;
+                document.getElementById("edit_usage_date").value = btn.dataset.date;
+                document.getElementById("edit_hours_usage").value = btn.dataset.hours;
+                document.getElementById("edit_fuel_consumed").value = btn.dataset.fuel;
+                document.getElementById("edit_observation").value = btn.dataset.obs;
 
-        }
+                // Preencher select de Máquinas
+                const machinerySelect = document.getElementById("edit_machinery_fk");
+                const selectedMachineryId = btn.dataset.machinery_id;
+                machinerySelect.innerHTML = machinery_list.map(m =>
+                    `<option style="color: white;" value="${m.id_machinery}" ${m.id_machinery == selectedMachineryId ? 'selected' : ''}>${m.model}</option>`
+                ).join('');
 
-        function editar(id) {
-            const resultado = pesquisar(id)
-            if (resultado) {
-                document.getElementById("hidden_id").value = "atualizar";
-                document.getElementById("input_id").value = resultado.id;
-                document.getElementById("input_name").value = resultado.nome;
-                document.getElementById("input_cargo").value = resultado.cargo;
-                document.getElementById("input_salario").value = resultado.salario;
-            } else {
-                alert("Funcionário não encontrado.");
-            }
-        }
+                // Preencher select de Funcionários
+                const employeeSelect = document.getElementById("edit_employee_fk");
+                const selectedEmployeeId = btn.dataset.employee_id;
+                employeeSelect.innerHTML = employee_list.map(e =>
+                    `<option style="color: white;" value="${e.id_employee}" ${e.id_employee == selectedEmployeeId ? 'selected' : ''}>${e.name}</option>`
+                ).join('');
 
-        function pesquisar(id) {
-            for (let i = 0; i < lista.length; i++) {
-                if (lista[i].id === id) {
-                    return lista[i];
+                popupUsageEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup ao clicar no X
+        closePopupUsageEdit.onclick = () => popupUsageEdit.style.display = "none";
+
+        // Deletar Uso do Maquinário
+        document.querySelectorAll("[id^='delete_usage_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[2];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_machinery_usage_add").value = id;
+                        document.getElementById("btn-submit_usage").value = "Remover";
+                        document.getElementById("btn-submit_usage").click();
+                    };
+
+                    // showDeleteModal deve ser definido em script.js (como em estoque.html)
+                    showDeleteModal(
+                        "Deletar Uso",
+                        "Você tem certeza que deseja remover este registro de uso de maquinário permanentemente?",
+                        deleteAction
+                    );
                 }
-            }
-            return null;
-        }
+            });
+        });
 
-        function atualizarLista(id, nome, cargo, salario) {
-            for (let i = 0; i < lista.length; i++) {
-                if (lista[i].id === id) {
-                    lista[i].nome = nome;
-                    lista[i].cargo = cargo;
-                    lista[i].salario = salario;
-                    return true;
+
+        // =========================================================================
+        //                         2. MAQUINÁRIO (EQUIPAMENTO)
+        // =========================================================================
+
+        const popupMachineryEdit = document.getElementById("popup_edit_machinery");
+        const closePopupMachineryEdit = document.querySelector(".close_popup_machinery");
+
+        // Abrir popup ao clicar em "Editar" Maquinário
+        document.querySelectorAll(".btn_edit_machinery").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_machinery").value = btn.dataset.id;
+                document.getElementById("edit_model").value = btn.dataset.model;
+                document.getElementById("edit_year").value = btn.dataset.year;
+                document.getElementById("edit_total_worked_hours").value = btn.dataset.hours;
+                document.getElementById("edit_total_fuel_consumption").value = btn.dataset.fuel;
+
+                // Preencher select de Marcas
+                const brandSelect = document.getElementById("edit_brand");
+                const selectedBrandId = btn.dataset.brand_id;
+                brandSelect.innerHTML = list_machinerybrand.map(b =>
+                    `<option style="color: white;" value="${b.id_machinery_brand}" ${b.id_machinery_brand == selectedBrandId ? 'selected' : ''}>${b.name}</option>`
+                ).join('');
+
+                // Preencher select de Tipos
+                const typeSelect = document.getElementById("edit_type");
+                const selectedTypeId = btn.dataset.type_id;
+                typeSelect.innerHTML = list_id_machinery_type.map(t =>
+                    `<option style="color: white;" value="${t.id_machinery_type}" ${t.id_machinery_type == selectedTypeId ? 'selected' : ''}>${t.name}</option>`
+                ).join('');
+
+                popupMachineryEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup ao clicar no X
+        closePopupMachineryEdit.onclick = () => popupMachineryEdit.style.display = "none";
+
+        // Deletar Maquinário (Equipamento)
+        document.querySelectorAll("[id^='delete_machinery_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[2];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_machinery_add").value = id;
+                        document.getElementById("btn-submit_machinery").value = "Remover";
+                        document.getElementById("btn-submit_machinery").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Maquinário",
+                        "Você tem certeza que deseja remover este maquinário permanentemente?",
+                        deleteAction
+                    );
                 }
-            }
-            return false;
-        }
+            });
+        });
 
-        function salvar() {
-            const id = parseInt(document.getElementById("input_id").value);
-            const nome = document.getElementById("input_name").value;
-            const cargo = document.getElementById("input_cargo").value;
-            const salario = parseFloat(document.getElementById("input_salario").value);
+        // =========================================================================
+        //                         3. MARCAS DE MÁQUINAS
+        // =========================================================================
 
-            if (!id || !nome || !cargo || !salario) {
-                return alert("Por favor, preencha todos os campos corretamente.");
-            }
+        const popupBrandEdit = document.getElementById("popup_edit_brand");
+        const closePopupBrandEdit = document.querySelector(".close_popup_brand");
 
-            if (atualizarLista(id, nome, cargo, salario)) {
-                alert("Funcionário atualizado com sucesso.");
+        // Abrir popup ao clicar em "Editar" Marca
+        document.querySelectorAll(".btn_edit_brand").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_brand").value = btn.dataset.id;
+                document.getElementById("edit_brand_name").value = btn.dataset.name;
+
+                console.log("Editando marca - Id: " + btn.dataset.id + " | Nome: " + btn.dataset.name);
+
+                popupBrandEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup ao clicar no X
+        closePopupBrandEdit.onclick = () => popupBrandEdit.style.display = "none";
+
+        // Deletar Marca
+        document.querySelectorAll("[id^='delete_brand_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[2];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_brand_add").value = id;
+                        document.getElementById("btn-submit_brand").value = "Remover";
+                        document.getElementById("btn-submit_brand").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Marca de Máquina",
+                        "Você tem certeza que deseja remover esta marca permanentemente?",
+                        deleteAction
+                    );
+                }
+            });
+        });
+
+
+        // =========================================================================
+        //                         4. TIPOS DE MÁQUINAS
+        // =========================================================================
+
+        const popupTypeEdit = document.getElementById("popup_edit_type");
+        const closePopupTypeEdit = document.querySelector(".close_popup_type");
+
+        // Abrir popup ao clicar em "Editar" Tipo
+        document.querySelectorAll(".btn_edit_type").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_type").value = btn.dataset.id;
+                document.getElementById("edit_type_name").value = btn.dataset.name;
+
+                console.log("Editando tipo - Id: " + btn.dataset.id + " | Nome: " + btn.dataset.name);
+
+                popupTypeEdit.style.display = "block";
+            });
+        });
+
+        // Fechar popup ao clicar no X
+        closePopupTypeEdit.onclick = () => popupTypeEdit.style.display = "none";
+
+        // Deletar Tipo
+        document.querySelectorAll("[id^='delete_type_']").forEach(item => {
+            item.addEventListener("click", event => {
+                event.preventDefault();
+                const id = item.id.split("_")[2];
+
+                if (id !== null) {
+                    const deleteAction = () => {
+                        document.getElementById("id_type_add").value = id;
+                        document.getElementById("btn-submit_type").value = "Remover";
+                        document.getElementById("btn-submit_type").click();
+                    };
+
+                    showDeleteModal(
+                        "Deletar Tipo de Máquina",
+                        "Você tem certeza que deseja remover este tipo de máquina permanentemente?",
+                        deleteAction
+                    );
+                }
+            });
+        });
+
+
+        // =========================================================================
+        //                         FECHAR POPUPS E TEMA
+        // =========================================================================
+
+        // Fechar popups ao clicar fora
+        window.addEventListener("click", (e) => {
+            if (e.target == popupUsageEdit) popupUsageEdit.style.display = "none";
+            if (e.target == popupMachineryEdit) popupMachineryEdit.style.display = "none";
+            if (e.target == popupBrandEdit) popupBrandEdit.style.display = "none";
+            if (e.target == popupTypeEdit) popupTypeEdit.style.display = "none";
+        });
+
+        // TEMA (copiado do estoque.html)
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
             } else {
-                alert("Funcionário não encontrado.");
+                localStorage.setItem("theme", "dark");
             }
-            load()
-            limparCampos();
-        }
-
-        function load() {
-            tabela.innerHTML = `
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Cargo</th>
-                    <th>Salário</th>
-                    <th>Ações</th>
-                </tr>
-            `;
-
-            tabela.innerHTML += `
-                <tr>
-                    <td><input type="text" value="?" class="input-value" id="input_id" disabled></td>
-                    <td><input type="text" name="name" class="input-value" id="input_name"></td>
-                    <td><input type="text" name="cargo" class="input-value" id="input_cargo"></td>
-                    <td><input type="number" name="saalrio" class="input-value" id="input_salario"></td>
-                    <input type="hidden" name="id" id="hidden_id" value="cadastrar">
-                    <td><input type="submit" class="button-submit" value="Salvar"></td>
-                </tr>
-            `;
-
-            for (let i = 0; i < lista.length; i++) {
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${lista[i].id}</td>
-                        <td>${lista[i].nome}</td>
-                        <td>${lista[i].cargo}</td>
-                        <td>R$ ${lista[i].salario.toFixed(2).replace(".", ",")}</td>
-                        <td><span class="btn-editar" onclick="editar(${lista[i].id})">Editar</span></td>
-                    </tr>
-                `;
-            }
-        }
-
-        function limparCampos() {
-            document.getElementById("input_id").value = "?";
-            document.getElementById("input_name").value = "";
-            document.getElementById("input_cargo").value = "";
-            document.getElementById("input_salario").value = "";
-        }
+            location.reload();
+        });
     </script>
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 
 </body>
 
