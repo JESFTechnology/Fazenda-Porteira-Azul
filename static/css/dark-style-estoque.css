@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 table {
     width: 100%;
     border-collapse: collapse;
@@ -22,3 +23,25 @@ option{
 .p_actions{
             cursor: pointer;
         }
+=======
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    color: #f5f5f5;
+    border: 1px solid #f5f5f5;
+    padding: 8px;
+}
+
+th {
+    color: white;
+    background-color: #454545;
+    text-align: left;
+}
+
+option{
+    color: black;
+}
+>>>>>>> 9fc8af32b96d6c61f26cdf59392baa72f73e438f

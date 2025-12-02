@@ -74,6 +74,7 @@
             {% endfor %}
         </table>
         <br>
+        {% if cotacao[0][0]['municipality'] != None %}
         <h1>Cotação atual do café cereja (60Kg por saco)</h1>
         <h2>{{cotacao[0][0]['municipality']}} | R${{cotacao[0][0]['price_br']}}</h2>
         <div class="calc">
@@ -112,6 +113,10 @@
                 }
             </script>
         </div>
+        {% else %}
+        <h1>Cotação atual do café cereja (60Kg por saco)</h1>
+        <h2>-- OFFLINE --</h2>
+        {% endif %}
     </section>
 
     <footer>

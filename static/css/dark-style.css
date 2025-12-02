@@ -185,3 +185,99 @@ option{
     border: none;
     cursor: pointer;
 }
+/* ---------- RESET ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------- BODY ---------- */
+body {
+    background: linear-gradient(135deg, #002d44, #000000);
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+/* ---------- HEADER ---------- */
+header {
+    width: 100%;
+    max-width: 900px;
+    background: #ffffff36;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header a {
+    text-decoration: none;
+    color: #9ecfff;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 10px 20px;
+    transition: 0.3s;
+    border-bottom: 2px solid transparent;
+}
+
+header a:hover {
+    color: #f0f6ff;
+    border-color: #ffffff;
+}
+
+/* ---------- SECTION ---------- */
+section {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    background: #ffffff36;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+section h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d1d1d1;
+    margin-bottom: 25px;
+}
+
+/* ---------- IFRAME ---------- */
+iframe {
+    width: 100%;
+    max-width: 700px;
+    height: 395px;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+    margin-top: auto;
+    text-align: center;
+    color: #fff;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/*Classes*/
+.Margin_Padding{
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+}

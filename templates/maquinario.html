@@ -35,7 +35,7 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento-uso" method="post">
                     <td class="Margin_Padding">
                         0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
                     <td class="Margin_Padding">
@@ -103,9 +103,9 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-veiculos-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                        0<input type="hidden" value="0" name="id_machinery" id="id_machinery"></td>
                     <td class="Margin_Padding">
                         <input type="text" name="model" value="" class="input-value semBack-white" id="model">
                     </td>
@@ -121,13 +121,17 @@
                             id="total_fuel_consumption">
                     </td>
                     <td class="Margin_Padding">
-                        <select name="grain" id="" class="input-value semBack-white">
-                            <option value="teste">Teste</option>
+                        <select name="brand" id="" class="input-value semBack-white">
+                            {% for item in list_machinerybrand %}
+                            <option value="{{item.id_machinery_brand}}">{{item.name}}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td class="Margin_Padding">
-                        <select name="grain" id="employee" class="input-value semBack-white">
-                            <option value=""></option>
+                        <select name="type" id="" class="input-value semBack-white">
+                            {% for item in list_id_machinery_type %}
+                            <option value="{{item.id_machinery_type}}">{{item.name}}</option>
+                            {% endfor %}
                         </select>
                     </td>
                     <td class="Margin_Padding">

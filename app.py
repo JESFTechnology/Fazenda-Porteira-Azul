@@ -374,8 +374,8 @@ def bolsa():
     return render_template("bolsa.html", cotacao=money_coffe_requests(),list_marketquotes=list_marketquotes)
 
 
-@app.route("/maquinario-gerenciamento", methods=["GET"])
-def maquinario_gerenciamento():
+@app.route("/maquinario-gerenciamento-uso", methods=["GET"])
+def maquinario_gerenciamento_uso():
     id = request.form.get("id_machinery_usage")
     usage_date = request.form.get("usage_date")
     hours_usage = request.form.get("hours_usage")
@@ -404,6 +404,25 @@ def maquinario_gerenciamento():
         else:
             print("ID is None, cannot remove machinery usage item.")
     return redirect("/maquinario")
+
+@app.route("/maquinario-gerenciamento", methods=["GET"])
+def maquinario_gerenciamento():
+    id = request.form.get("id_machinery")
+    model = request.form.get("model")
+    year = request.form.get("year")
+    total_worked_hours = request.form.get("total_worked_hours")
+    total_fuel_consumption = request.form.get("total_fuel_consumption")
+    brand_m = request.form.get("brand")
+    type_m = request.form.get("type")
+    button = request.form.get("button")
+    if button == "Adicionar":
+        db.connect()
+        cursor = db.get_cursor()
+       
+        cursor.execute(query)
+        db.commit()
+        db.close()
+        print(query)
 
 
 @app.route("/exit", methods=["GET"])

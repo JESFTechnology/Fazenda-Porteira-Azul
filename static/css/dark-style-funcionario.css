@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 table {
     width: 100%;
     border-collapse: collapse;
@@ -48,3 +49,51 @@ option{
 .p_actions{
             cursor: pointer;
         }
+=======
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #c4c4c4;
+    padding: 8px;
+}
+
+th {
+    color: white;
+    background-color: #454545;
+    text-align: left;
+}
+
+.button-submit {
+    padding: 6px 12px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-value {
+    text-align: center;
+    width: 90%;
+    padding: 6px;
+    border: 1px solid #c4c4c4;
+    border-radius: 4px;
+}
+
+.btn-editar {
+    color: #1e90ff;
+    cursor: pointer;
+}
+
+option{
+    color: black;
+}
+
+.Link_Send_Email_Td{
+    color: white;
+    text-decoration: none;
+}
+>>>>>>> 9fc8af32b96d6c61f26cdf59392baa72f73e438f
