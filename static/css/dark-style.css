@@ -281,3 +281,20 @@ footer {
     padding: 0;
     border-radius: 0;
 }
+
+.p_actions{
+    cursor: pointer;
+}
+
+.p_actions:hover{
+    cursor: pointer;
+    background-color: #000000;
+}
+
+.close_popup_storage{
+    cursor: pointer;
+}
+
+.close_popup_local{
+    cursor: pointer;
+}

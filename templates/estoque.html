@@ -76,7 +76,7 @@
                 <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
                 <td class="Margin_Padding">{{ item.local }}</td>
                 <td class="Margin_Padding">
-                    <p class="btn_edit"
+                    <p class="btn_edit p_actions"
                     data-id="{{ item.id }}"
                     data-grain_id="{{ item.id_grain }}"
                     data-quantity="{{ item.quantity_bags }}"
@@ -84,7 +84,7 @@
                     Editar
                     </p>
                     <hr>
-                    <p id="delete_storage_{{item.id}}">Excluir</p>
+                    <p class="p_actions" id="delete_storage_{{item.id}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -179,124 +179,70 @@
 
 
     <script>
-        /*popup inicio*/
+        // ===== POPUP ESTOQUE (EDITAR) =====
+        const popupStorageEdit = document.getElementById("popup_edit_storage");
+        const closePopupStorageEdit = document.querySelector(".close_popup_storage");
 
-        const popup = document.getElementById("popup_edit_storage");
-        const closePopup = document.getElementById("close_popup");
-
+        // Abrir popup ao clicar em "Editar"
         document.querySelectorAll(".btn_edit").forEach(btn => {
             btn.addEventListener("click", () => {
-            document.getElementById("edit_id").value = btn.dataset.id;
-            console.log("Id: "+btn.dataset.id+" | Grain: "+btn.dataset.grain_id+" | Local: "+btn.dataset.local_id)
-            const list_grains = {{ list_grains | tojson }};
-            const grain_storage = document.getElementById("edit_grain");
-            const selected_id_grain =  btn.dataset.grain_id;
-            list_grains.map(g => console.log(g.id_grain == selected_id_grain));
-            grain_storage.innerHTML = list_grains.map(g =>
-                `<option style="color: white;" value="${g.id_grain}" ${g.id_grain == selected_id_grain ? 'selected' : ''}>${g.name}</option>`
-            ).join('');
+                // Preencher ID do armazenamento
+                document.getElementById("edit_id_storage").value = btn.dataset.id;
+                console.log("Id: " + btn.dataset.id + " | Grain: " + btn.dataset.grain_id + " | Local: " + btn.dataset.local_id);
 
-            const list_locations = {{ locations | tojson }};
-            const local_storage = document.getElementById("edit_local");
-            const selected_id_local = btn.dataset.local_id;
-            local_storage.innerHTML = list_locations.map(l =>
-                `<option style="color: white" value="${l.id_storage_location}" ${l.id_storage_location == selected_id_local ? 'selected' : ''}>${l.name}</option>`
-            ).join('');
+                // Preencher select de grãos
+                const list_grains = {{ list_grains | tojson }};
+                const grain_storage = document.getElementById("edit_grain");
+                const selected_id_grain = btn.dataset.grain_id;
+                grain_storage.innerHTML = list_grains.map(g =>
+                    `<option style="color: white;" value="${g.id_grain}" ${g.id_grain == selected_id_grain ? 'selected' : ''}>${g.name}</option>`
+                ).join('');
 
-            document.getElementById("edit_quantity_bags").value = btn.dataset.quantity;
+                // Preencher select de locais
+                const list_locations = {{ locations | tojson }};
+                const local_storage = document.getElementById("edit_local");
+                const selected_id_local = btn.dataset.local_id;
+                local_storage.innerHTML = list_locations.map(l =>
+                    `<option style="color: white" value="${l.id_storage_location}" ${l.id_storage_location == selected_id_local ? 'selected' : ''}>${l.name}</option>`
+                ).join('');
 
-            popup.style.display = "block";
+                // Preencher quantidade
+                document.getElementById("edit_quantity_bags").value = btn.dataset.quantity;
+
+                // Mostrar popup
+                popupStorageEdit.style.display = "block";
             });
         });
 
-        closePopup.onclick = () => popup.style.display = "none";
-        window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
+        // Fechar popup ao clicar no X
+        closePopupStorageEdit.onclick = () => popupStorageEdit.style.display = "none";
 
-        /*popup fim*/
-        document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
-            item.addEventListener("click", event => {
-                const id = item.id.split("_")[2];
-                if (id) {
-                    const id_storage = document.getElementById("id_storage");
-                    id_storage.value = id;
+        // ===== POPUP LOCAL (EDITAR) =====
+        const popupLocalEdit = document.getElementById("popup_edit_local");
+        const closePopupLocalEdit = document.querySelector(".close_popup_local");
 
-                    const amount_storage = document.getElementById("amount_storage")
-                    amount_storage.value = parseInt(document.getElementById(`quantity_bags_${id}`).innerText);
-                    
-                    
-                    const btn_submit = document.getElementById("btn-submit");
-                    btn_submit.value = "Editar";
-
-                    const list_grains = {{ list_grains | tojson }};
-                    const grain_storage = document.getElementById("form_grain_storage");
-                    const selected_id_grain = parseInt(item.id.split("_")[3]);
-                    grain_storage.innerHTML = list_grains.map(g =>
-                        `<option value="${g.id_grain}" ${g.id_grain === selected_id_grain ? 'selected' : ''}>${g.name}</option>`
-                    ).join('');
-
-                    const list_locations = {{ locations | tojson }};
-                    const local_storage = document.getElementById("form_local_storage");
-                    const selected_id_local = parseInt(item.id.split("_")[4]);
-                    local_storage.innerHTML = list_locations.map(l =>
-                        `<option value="${l.id_storage_location}" ${l.id_storage_location === selected_id_local ? 'selected' : ''}>${l.name}</option>`
-                    ).join('');
-                }
-            });
-        });
-
-
-        /*popup inicio*/
-
-        const popup_local = document.getElementById("popup_edit_local");
-        const closePopup_local = document.getElementById("close_popup_local");
-
-        document.querySelectorAll(".btn_edit").forEach(btn => {
+        // Abrir popup ao clicar em "Editar" local
+        document.querySelectorAll(".btn_edit_local").forEach(btn => {
             btn.addEventListener("click", () => {
-            document.getElementById("edit_id").value = btn.dataset.id;
-            console.log("Id: "+btn.dataset.id+" | Name: "+btn.dataset.name)
+                document.getElementById("edit_id_local").value = btn.dataset.id;
+                document.getElementById("edit_local_name").value = btn.dataset.name;
 
-            document.getElementById("edit_local_name").value = btn.dataset.name;
+                console.log("Editando local - Id: " + btn.dataset.id + " | Nome: " + btn.dataset.name);
 
-            popup.style.display = "block";
+                popupLocalEdit.style.display = "block";
             });
         });
 
-        closePopup.onclick = () => popup.style.display = "none";
-        window.onclick = e => { if(e.target == popup) popup.style.display = "none"; };
+        // Fechar popup local ao clicar no X
+        closePopupLocalEdit.onclick = () => popupLocalEdit.style.display = "none";
 
-        /*popup fim*/
-        document.querySelectorAll("[id^='edit_storage_']").forEach(item => {
-            item.addEventListener("click", event => {
-                const id = item.id.split("_")[2];
-                if (id) {
-                    const id_storage = document.getElementById("id_storage");
-                    id_storage.value = id;
-
-                    const amount_storage = document.getElementById("amount_storage")
-                    amount_storage.value = parseInt(document.getElementById(`quantity_bags_${id}`).innerText);
-                    
-                    
-                    const btn_submit = document.getElementById("btn-submit");
-                    btn_submit.value = "Editar";
-
-                    const list_grains = {{ list_grains | tojson }};
-                    const grain_storage = document.getElementById("form_grain_storage");
-                    const selected_id_grain = parseInt(item.id.split("_")[3]);
-                    grain_storage.innerHTML = list_grains.map(g =>
-                        `<option value="${g.id_grain}" ${g.id_grain === selected_id_grain ? 'selected' : ''}>${g.name}</option>`
-                    ).join('');
-
-                    const list_locations = {{ locations | tojson }};
-                    const local_storage = document.getElementById("form_local_storage");
-                    const selected_id_local = parseInt(item.id.split("_")[4]);
-                    local_storage.innerHTML = list_locations.map(l =>
-                        `<option value="${l.id_storage_location}" ${l.id_storage_location === selected_id_local ? 'selected' : ''}>${l.name}</option>`
-                    ).join('');
-                }
-            });
+        // ===== FECHAR POPUPS AO CLICAR FORA =====
+        window.addEventListener("click", (e) => {
+            if (e.target == popupStorageEdit) popupStorageEdit.style.display = "none";
+            if (e.target == popupLocalEdit) popupLocalEdit.style.display = "none";
         });
 
-
+        // ===== PREENCHER SELECTS INICIAIS =====
         document.getElementById("form_grain_storage").innerHTML = `
             {% for grain in list_grains %}
                 <option value="{{ grain.id_grain }}">{{ grain.name }}</option>
@@ -307,11 +253,12 @@
             {% for location in locations %}
                 <option value="{{ location.id_storage_location }}">{{ location.name }}</option>
             {% endfor %}
-        `
+        `;
 
+        // ===== DELETAR ESTOQUE =====
         document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
             item.addEventListener("click", event => {
-                const conf = confirm("Deseja realmente deletar esse estoque?")
+                const conf = confirm("Deseja realmente deletar esse estoque?");
                 const id = item.id.split("_")[2];
                 if (id !== null && conf) {
                     const id_storage = document.getElementById("id_storage");
@@ -323,9 +270,10 @@
             });
         });
 
+        // ===== DELETAR LOCAL =====
         document.querySelectorAll("[id^='delete_local_storage_']").forEach(item => {
             item.addEventListener("click", event => {
-                const conf = confirm("Deseja realmente deletar esse local de estoque?")
+                const conf = confirm("Deseja realmente deletar esse local de estoque?");
                 const id = item.id.split("_")[3];
                 if (id !== null && conf) {
                     const id_storage = document.getElementById("id_storage_local");
@@ -337,11 +285,7 @@
             });
         });
 
-
-
-
-
-
+        // ===== TEMA =====
         document.getElementById("theme").addEventListener("click", () => {
             if (localStorage.getItem("theme") === "dark") {
                 localStorage.setItem("theme", "light");
