@@ -355,7 +355,7 @@ def funcionario_gerenciamento():
                 db.commit()
 
     except Exception as e:
-        pass
+        print(e)
     finally:
         try:
             db.close()
