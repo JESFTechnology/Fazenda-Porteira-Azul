@@ -4,17 +4,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./../static/css/dark-style.css">
+    <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
+    <link rel="stylesheet" href="./../static/css/dark-style-funcionario.css">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
     <title>Fazenda Porteira Azul</title>
 </head>
 
 <body>
     <header>
-        <a href="main.html">Início</a>
-        <a href="estoque.html">Estoque</a>
-        <a href="funcionario.html">Funcionários</a>
-        <a href="maquinario.html">Maquinário</a>
+        <a href="main">Início</a>
+        <a href="estoque">Estoque</a>
+        <a href="funcionario">Funcionários</a>
+        <a href="maquinario">Maquinário</a>
+        <a href="producao">Produção</a>
+        <a href="bolsa">Bolsa / Cotação</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -24,43 +27,17 @@
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
+                <th>Email</th>
                 <th>Cargo</th>
-                <th>Salário</th>
                 <th>Ações</th>
             </tr>
-            <tr>
-                <form action="estoque-gerenciamento" method="post">
-                    <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
-                    <td class="Margin_Padding">
-                        <select name="name" id="form_grain_storage" class="input-value semBack-white">
-                            <option value="teste">teste</option>
-                        </select>
-                    </td>
-                    <td class="Margin_Padding">
-                        <input type="cargo" name="amount" value="0" class="input-value semBack-white"
-                            id="amount_storage">
-                    </td>
-                    <td class="Margin_Padding">
-                        <select name="salario" id="form_local_storage" class="input-value semBack-white"></select>
-                    </td>
-                    <td class="Margin_Padding">
-                        <input type="cadastrar" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
-                    </td>
-                </form>
-            </tr>
-            {% for item in list_storage %}
+            {% for item in list_employees %}
             <tr>
                 <td class="Margin_Padding">{{ item.id}}</td>
                 <td class="Margin_Padding">{{ item.name }}</td>
-                <td class="Margin_Padding" id="quantity_bags_{{item.id}}">{{ item.quantity_bags }}</td>
-                <td class="Margin_Padding">{{ item.local }}</td>
-                <td class="Margin_Padding">
-                    <p id="edit_storage_{{item.id}}_{{item.id_grain}}_{{item.id_location}}">Editar</p>
-                    <hr>
-                    <p id="delete_storage_{{item.id}}">Excluir</p>
-                </td>
+                <td class="Margin_Padding">{{ item.email }}</td>
+                <td class="Margin_Padding">{{ item.job }}</td>
+                <td class="Margin_Padding"><a class="Link_Send_Email_Td" href="mailto:{{ item.email }}">Enviar email</a></td>
             </tr>
             {% endfor %}
         </table>
@@ -70,126 +47,8 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <script>
 
-        var lista = [
-            { id: 1, nome: "João Silva", cargo: "Gerente", salario: 4500 },
-            { id: 2, nome: "Maria Oliveira", cargo: "Assistente Administrativo", salario: 2800 },
-            { id: 3, nome: "Carlos Souza", cargo: "Técnico de Manutenção", salario: 3200 },
-            { id: 4, nome: "Ana Pereira", cargo: "Analista de Marketing", salario: 3600 }
-        ]
-
-        const tabela = document.querySelector("table");
-
-        for (let i = 0; i < lista.length; i++) {
-            tabela.innerHTML += `
-                <tr>
-                    <td>${lista[i].id}</td>
-                    <td>${lista[i].nome}</td>
-                    <td>${lista[i].cargo}</td>
-                    <td>R$ ${lista[i].salario.toFixed(2).replace(".", ",")}</td>
-                    <td><span class="btn-editar" onclick="editar(${lista[i].id})">Editar</span></td>
-                </tr>
-            `;
-
-        }
-
-        function editar(id) {
-            const resultado = pesquisar(id)
-            if (resultado) {
-                document.getElementById("hidden_id").value = "atualizar";
-                document.getElementById("input_id").value = resultado.id;
-                document.getElementById("input_name").value = resultado.nome;
-                document.getElementById("input_cargo").value = resultado.cargo;
-                document.getElementById("input_salario").value = resultado.salario;
-            } else {
-                alert("Funcionário não encontrado.");
-            }
-        }
-
-        function pesquisar(id) {
-            for (let i = 0; i < lista.length; i++) {
-                if (lista[i].id === id) {
-                    return lista[i];
-                }
-            }
-            return null;
-        }
-
-        function atualizarLista(id, nome, cargo, salario) {
-            for (let i = 0; i < lista.length; i++) {
-                if (lista[i].id === id) {
-                    lista[i].nome = nome;
-                    lista[i].cargo = cargo;
-                    lista[i].salario = salario;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function salvar() {
-            const id = parseInt(document.getElementById("input_id").value);
-            const nome = document.getElementById("input_name").value;
-            const cargo = document.getElementById("input_cargo").value;
-            const salario = parseFloat(document.getElementById("input_salario").value);
-
-            if (!id || !nome || !cargo || !salario) {
-                return alert("Por favor, preencha todos os campos corretamente.");
-            }
-
-            if (atualizarLista(id, nome, cargo, salario)) {
-                alert("Funcionário atualizado com sucesso.");
-            } else {
-                alert("Funcionário não encontrado.");
-            }
-            load()
-            limparCampos();
-        }
-
-        function load() {
-            tabela.innerHTML = `
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Cargo</th>
-                    <th>Salário</th>
-                    <th>Ações</th>
-                </tr>
-            `;
-
-            tabela.innerHTML += `
-                <tr>
-                    <td><input type="text" value="?" class="input-value" id="input_id" disabled></td>
-                    <td><input type="text" name="name" class="input-value" id="input_name"></td>
-                    <td><input type="text" name="cargo" class="input-value" id="input_cargo"></td>
-                    <td><input type="number" name="saalrio" class="input-value" id="input_salario"></td>
-                    <input type="hidden" name="id" id="hidden_id" value="cadastrar">
-                    <td><input type="submit" class="button-submit" value="Salvar"></td>
-                </tr>
-            `;
-
-            for (let i = 0; i < lista.length; i++) {
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${lista[i].id}</td>
-                        <td>${lista[i].nome}</td>
-                        <td>${lista[i].cargo}</td>
-                        <td>R$ ${lista[i].salario.toFixed(2).replace(".", ",")}</td>
-                        <td><span class="btn-editar" onclick="editar(${lista[i].id})">Editar</span></td>
-                    </tr>
-                `;
-            }
-        }
-
-        function limparCampos() {
-            document.getElementById("input_id").value = "?";
-            document.getElementById("input_name").value = "";
-            document.getElementById("input_cargo").value = "";
-            document.getElementById("input_salario").value = "";
-        }
-    </script>
-
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
 </body>
 
 </html>
