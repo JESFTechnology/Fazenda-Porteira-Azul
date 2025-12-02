@@ -378,7 +378,7 @@ def bolsa():
     )
 
 
-@app.route("/maquinario-gerenciamento-uso", methods=["GET"])
+@app.route("/maquinario-gerenciamento-uso", methods=["POST"])
 def maquinario_gerenciamento_uso():
     id = request.form.get("id_machinery_usage")
     usage_date = request.form.get("usage_date")
@@ -410,7 +410,7 @@ def maquinario_gerenciamento_uso():
     return redirect("/maquinario")
 
 
-@app.route("/maquinario-gerenciamento", methods=["GET"])
+@app.route("/maquinario-gerenciamento", methods=["POST"])
 def maquinario_gerenciamento():
     id = request.form.get("id_machinery")
     model = request.form.get("model")
@@ -428,6 +428,150 @@ def maquinario_gerenciamento():
         db.commit()
         db.close()
 
+@app.route("/maquinario-gerenciamento-brand", methods=["POST"])
+def maquinario_gerenciamento_brand():
+    id = request.form.get("id_machinery_brand")
+    name = request.form.get("name")
+    button = request.form.get("button")
+    
+    if button == "Adicionar":
+        try:
+            db.connect()
+            cursor = db.get_cursor()
+            query = f"INSERT INTO machinerybrand (name) VALUES ('{name}');"
+            cursor.execute(query)
+            db.commit()
+            db.close()
+        except Exception as e:
+            print(e)
+    
+    elif button == "Remover":
+        if id is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"DELETE FROM machinerybrand WHERE id_machinery_brand = {int(id)};"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+            except Exception as e:
+                print(e)
+        else:
+            pass
+    
+    elif button == "Editar":
+        if id is not None and name is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"UPDATE machinerybrand SET name = '{name}' WHERE id_machinery_brand = {int(id)};"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+            except Exception as e:
+                print(e)
+    
+    return redirect("/maquinario")
+
+@app.route("/maquinario-gerenciamento-type", methods=["POST"])
+def maquinario_gerenciamento_type():
+    id = request.form.get("id_machinery_type")
+    name = request.form.get("name")
+    button = request.form.get("button")
+    
+    if button == "Adicionar":
+        try:
+            db.connect()
+            cursor = db.get_cursor()
+            query = f"INSERT INTO machinerytype (name) VALUES ('{name}');"
+            cursor.execute(query)
+            db.commit()
+            db.close()
+        except Exception as e:
+            print(e)
+    
+    elif button == "Remover":
+        if id is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"DELETE FROM machinerytype WHERE id_machinery_type = {int(id)};"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+                print("Removido com sucesso!")
+            except Exception as e:
+                print(e)
+        else:
+            pass
+    
+    elif button == "Editar":
+        if id is not None and name is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"UPDATE machinerytype SET name = '{name}' WHERE id_machinery_type = {int(id)};"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+            except Exception as e:
+                print(e)
+    
+    return redirect("/maquinario")
+
+@app.route("/cotacao-gerenciamento", methods=["POST"])
+def cotacao_gerenciamento():
+    id = request.form.get("id_market_quotes")
+    price_per_bag = request.form.get("price_per_bag")
+    quote_date = request.form.get("quote_date")
+    observation = request.form.get("observation")
+    id_grain_fk = request.form.get("id_grain_fk")
+    button = request.form.get("button")
+    
+    if button == "Adicionar":
+        try:
+            db.connect()
+            cursor = db.get_cursor()
+            query = f"""INSERT INTO marketquotes (price_per_bag, quote_date, observation, id_grain_fk) 
+                       VALUES ({float(price_per_bag)}, '{quote_date}', '{observation}', {int(id_grain_fk)});"""
+            cursor.execute(query)
+            db.commit()
+            db.close()
+        except Exception as e:
+            pass
+    
+    elif button == "Remover":
+        if id is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"DELETE FROM marketquotes WHERE id_market_quotes = {int(id)};"
+                cursor.execute(query)
+                db.commit()
+                db.close()
+            except Exception as e:
+                print(e)
+        else:
+            pass
+    
+    elif button == "Editar":
+        if id is not None:
+            try:
+                db.connect()
+                cursor = db.get_cursor()
+                query = f"""UPDATE marketquotes 
+                           SET price_per_bag = {float(price_per_bag)}, 
+                               quote_date = '{quote_date}', 
+                               observation = '{observation}', 
+                               id_grain_fk = {int(id_grain_fk)} 
+                           WHERE id_market_quotes = {int(id)};"""
+                cursor.execute(query)
+                db.commit()
+                db.close()
+            except Exception as e:
+                print(e)
+    
+    return redirect("/bolsa")
 
 @app.route("/exit", methods=["GET"])
 def exit():
@@ -447,6 +591,10 @@ def get_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/contato", methods=["GET"])
+def contato():
+    return render_template("contato.html")
 
 # 404 Error Handler
 @app.errorhandler(404)

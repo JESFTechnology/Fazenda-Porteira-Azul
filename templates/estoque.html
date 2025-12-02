@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./../static/css/popup_editar.css">
     <link rel="stylesheet" href="./../static/css/dark-style-estoque.css"
         id="stylesheet_body_storage">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Demo</title>
 
 </head>
@@ -21,6 +22,7 @@
         <a href="maquinario">Maquinário</a>
         <a href="producao">Produção</a>
         <a href="bolsa">Bolsa / Cotação</a>
+        <a href="contato">Contato</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -159,7 +161,7 @@
 </div>
 
 
-    <div id="popup_edit_local" class="popup">
+<div id="popup_edit_local" class="popup">
     <div class="popup_content">
         <div class="popup_header">
             <h3>Editar Local</h3>
@@ -175,6 +177,21 @@
             <input type="submit" class="btn-save-popup" value="Editar" name="button">
         </form>
     </div>
+</div>
+
+<div id="deleteConfirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+        <h3 id="modalTitle">Confirmação de Deleção</h3>
+        <p id="modalBody">Deseja realmente deletar este item?</p>
+        
+        <button id="confirmDeleteButton" style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">
+            Deletar
+        </button>
+        <button id="cancelDeleteButton" style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">
+            Cancelar
+        </button>
+        
+        </div>
 </div>
 
 
@@ -255,36 +272,6 @@
             {% endfor %}
         `;
 
-        // ===== DELETAR ESTOQUE =====
-        document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
-            item.addEventListener("click", event => {
-                const conf = confirm("Deseja realmente deletar esse estoque?");
-                const id = item.id.split("_")[2];
-                if (id !== null && conf) {
-                    const id_storage = document.getElementById("id_storage");
-                    id_storage.value = id;
-                    const btn_submit = document.getElementById("btn-submit");
-                    btn_submit.value = "Remover";
-                    btn_submit.click();
-                }
-            });
-        });
-
-        // ===== DELETAR LOCAL =====
-        document.querySelectorAll("[id^='delete_local_storage_']").forEach(item => {
-            item.addEventListener("click", event => {
-                const conf = confirm("Deseja realmente deletar esse local de estoque?");
-                const id = item.id.split("_")[3];
-                if (id !== null && conf) {
-                    const id_storage = document.getElementById("id_storage_local");
-                    id_storage.value = id;
-                    const btn_submit = document.getElementById("btn-submit_local");
-                    btn_submit.value = "Remover";
-                    btn_submit.click();
-                }
-            });
-        });
-
         // ===== TEMA =====
         document.getElementById("theme").addEventListener("click", () => {
             if (localStorage.getItem("theme") === "dark") {
@@ -297,6 +284,7 @@
     </script>
 
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
 </body>
 
 </html>

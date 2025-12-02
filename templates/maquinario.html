@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Fazenda Porteira Azul</title>
 
 </head>
@@ -18,6 +19,7 @@
         <a href="maquinario">Maquinário</a>
         <a href="producao">Produção</a>
         <a href="bolsa">Bolsa / Cotação</a>
+        <a href="contato">Contato</a>
         <a id="theme">Tema: </a>
     </header>
 
@@ -50,7 +52,8 @@
                             id="fuel_consumed">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="text" name="observation" value="" class="input-value semBack-white" id="observation">
+                        <input type="text" name="observation" value="" class="input-value semBack-white"
+                            id="observation">
                     </td>
                     <td class="Margin_Padding">
                         <select name="id_machinery_fk" id="id_machinery_fk" class="input-value semBack-white">
@@ -82,9 +85,15 @@
                 <td class="Margin_Padding">{{ item.machinery }}</td>
                 <td class="Margin_Padding">{{ item.employees }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_machinery_usage" data-id="{{ item.id_machinery_usage }}"
+                        data-usage_date="{{ item.usage_date }}" data-hours_usage="{{ item.hours_usage }}"
+                        data-fuel_consumed="{{ item.fuel_consumed }}" data-observation="{{ item.observation }}"
+                        data-id_machinery="{{ item.id_machinery_usage }}"
+                        data-id_employee="{{ item.id_machinery_usage }}">
+                        Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_machinery_use_{{item.id_machinery_usage}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -150,9 +159,14 @@
                 <td class="Margin_Padding">{{ item.machinery_brand_fk }}</td>
                 <td class="Margin_Padding">{{ item.machinery_type_fk }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_machinery" data-id="{{ item.id_machinery }}" data-model="{{ item.model }}"
+                        data-year="{{ item.year }}" data-total_worked_hours="{{ item.total_worked_hours }}"
+                        data-total_fuel_consumption="{{ item.total_fuel_consumption }}"
+                        data-brand="{{ item.machinery_brand_fk }}" data-type="{{ item.machinery_type_fk }}">
+                        Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_machinery_all_{{item.id_machinery}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -166,11 +180,11 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-veiculos-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento-brand" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                        0<input type="hidden" name="id_machinery_brand" id="id_machinery_brand_form"></td>
                     <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="brand_name">
                     </td>
                     <td class="Margin_Padding">
                         <input type="submit" value="Adicionar" id="btn-submit" name="button"
@@ -183,9 +197,11 @@
                 <td class="Margin_Padding">{{ item.id_machinery_brand}}</td>
                 <td class="Margin_Padding">{{ item.name }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_brand" data-id="{{ item.id_machinery_brand }}" data-name="{{ item.name }}">
+                        Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_machinery_brand_{{ item.id_machinery_brand }}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -199,11 +215,11 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-veiculos-gerenciamento" method="post">
+                <form action="maquinario-gerenciamento-type" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
+                        0<input type="hidden" name="id_machinery_type" id="id_machinery_type_form"></td>
                     <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="type_name">
                     </td>
                     <td class="Margin_Padding">
                         <input type="submit" value="Adicionar" id="btn-submit" name="button"
@@ -216,9 +232,11 @@
                 <td class="Margin_Padding">{{ item.id_machinery_type}}</td>
                 <td class="Margin_Padding">{{ item.name }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_type" data-id="{{ item.id_machinery_type }}" data-name="{{ item.name }}">
+                        Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_machinery_type_{{item.id_machinery_type}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -229,7 +247,26 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
+    <div id="deleteConfirmationModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+            <h3 id="modalTitle">Confirmação de Deleção</h3>
+            <p id="modalBody">Deseja realmente deletar este item?</p>
+
+            <button id="confirmDeleteButton"
+                style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">
+                Deletar
+            </button>
+            <button id="cancelDeleteButton"
+                style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">
+                Cancelar
+            </button>
+
+        </div>
+    </div>
+
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
 
 </body>
 

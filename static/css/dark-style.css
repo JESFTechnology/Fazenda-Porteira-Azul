@@ -286,6 +286,15 @@ footer {
     cursor: pointer;
 }
 
+.Margin_Padding p{
+    cursor: pointer;
+}
+
+.Margin_Padding p:hover{
+    cursor: pointer;
+    background-color: #000000;
+}
+
 .p_actions:hover{
     cursor: pointer;
     background-color: #000000;
