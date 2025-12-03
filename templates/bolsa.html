@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css">
+    <link rel="stylesheet" href="./../static/css/dark-style-bolsa.css" id="stylesheet_body_bolsa">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Fazenda Porteira Azul</title>
 
@@ -24,6 +26,7 @@
     </header>
 
     <section>
+        <!-- ========== TABELA: REGISTRO DE COTAÇÕES ========== -->
         <h1>Registro de Cotações</h1>
         <table>
             <tr>
@@ -35,47 +38,52 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-gerenciamento" method="post">
+                <form action="bolsa-cotacao-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="price_per_bag" value="" class="input-value semBack-white" id="name">
+                        0<input type="hidden" value="0" name="id_market_quotes" id="id_market_quotes">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="date" name="quote_date" value="" class="input-value semBack-white" id="type">
+                        <input type="number" step="0.01" name="price_per_bag" value="0" class="input-value semBack-white" id="form_price_per_bag">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="text" name="observation" value="" class="input-value semBack-white" id="type">
+                        <input type="date" name="quote_date" value="" class="input-value semBack-white" id="form_quote_date">
                     </td>
                     <td class="Margin_Padding">
-                        <select name="id_grain_fk" id="id_grain_fk" class="input-value semBack-white">
-                            {% for item in machinery_list %}
-                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="text" name="observation" value="" class="input-value semBack-white" id="form_observation_quote" placeholder="Digite a observação:">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
+                        <select name="id_grain_fk" id="form_grain_fk" class="input-value semBack-white"></select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-quote" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
             {% for item in list_marketquotes %}
             <tr>
                 <td class="Margin_Padding">{{ item.id_market_quotes}}</td>
-                <td class="Margin_Padding">{{ item.price_per_bag }}</td>
+                <td class="Margin_Padding">R${{ item.price_per_bag }}</td>
                 <td class="Margin_Padding">{{ item.quote_date }}</td>
                 <td class="Margin_Padding">{{ item.observation }}</td>
                 <td class="Margin_Padding">{{ item.grain }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_quote p_actions"
+                    data-id="{{ item.id_market_quotes }}"
+                    data-price="{{ item.price_per_bag }}"
+                    data-date="{{ item.quote_date }}"
+                    data-observation="{{ item.observation }}"
+                    data-grain_id="{{ item.id_grain_fk }}">
+                    Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_quote_{{item.id_market_quotes}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
         </table>
         <br>
+
+        <!-- ========== CALCULADORA DE COTAÇÃO ========== -->
         {% if cotacao[0][0]['municipality'] != None %}
         <h1>Cotação atual do café cereja (60Kg por saco)</h1>
         <h2>{{cotacao[0][0]['municipality']}} | R${{cotacao[0][0]['price_br']}}</h2>
@@ -125,8 +133,102 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <!-- ========== POPUP: EDITAR COTAÇÃO ========== -->
+    <div id="popup_edit_quote" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Cotação</h3>
+                <span class="close_popup_quote">&times;</span>
+            </div>
 
+            <form id="form_edit_quote" action="bolsa-cotacao-gerenciamento" method="post">
+                <input type="hidden" name="id_market_quotes" id="edit_id_market_quotes">
+
+                <label>Preço por Saco de 60Kg</label>
+                <input type="number" step="0.01" name="price_per_bag" id="edit_price_per_bag">
+
+                <label>Data da cotação</label>
+                <input type="date" name="quote_date" id="edit_quote_date">
+
+                <label>Observação</label>
+                <input type="text" name="observation" id="edit_observation_quote">
+
+                <label>Grão</label>
+                <select name="id_grain_fk" id="edit_grain_fk"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== MODAL DE CONFIRMAÇÃO DE DELEÇÃO ========== -->
+    <div id="deleteConfirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+            <h3 id="modalTitle">Confirmação de Deleção</h3>
+            <p id="modalBody">Deseja realmente deletar este item?</p>
+
+            <button id="confirmDeleteButton" style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">
+                Deletar
+            </button>
+            <button id="cancelDeleteButton" style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== POPUP EDITAR COTAÇÃO =====
+        const popupQuoteEdit = document.getElementById("popup_edit_quote");
+        const closePopupQuoteEdit = document.querySelector(".close_popup_quote");
+
+        document.querySelectorAll(".btn_edit_quote").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_market_quotes").value = btn.dataset.id;
+                document.getElementById("edit_price_per_bag").value = btn.dataset.price;
+                document.getElementById("edit_quote_date").value = btn.dataset.date;
+                document.getElementById("edit_observation_quote").value = btn.dataset.observation;
+
+                // Preencher select de grãos
+                const list_grains = {{ list_grains | tojson }};
+                const grain_quote = document.getElementById("edit_grain_fk");
+                const selected_id_grain = btn.dataset.grain_id;
+                grain_quote.innerHTML = list_grains.map(g =>
+                    `<option style="color: white;" value="${g.id_grain}" ${g.id_grain == selected_id_grain ? 'selected' : ''}>${g.name}</option>`
+                ).join('');
+
+                console.log("Editando cotação - Id: " + btn.dataset.id);
+
+                popupQuoteEdit.style.display = "block";
+            });
+        });
+
+        closePopupQuoteEdit.onclick = () => popupQuoteEdit.style.display = "none";
+
+        // ===== FECHAR POPUP AO CLICAR FORA =====
+        window.addEventListener("click", (e) => {
+            if (e.target == popupQuoteEdit) popupQuoteEdit.style.display = "none";
+        });
+
+        // ===== PREENCHER SELECT INICIAL DE GRÃOS =====
+        document.getElementById("form_grain_fk").innerHTML = `
+            {% for grain in list_grains %}
+                <option value="{{ grain.id_grain }}">{{ grain.name }}</option>
+            {% endfor %}
+        `;
+
+        // ===== TEMA =====
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
+            } else {
+                localStorage.setItem("theme", "dark");
+            }
+            location.reload();
+        });
+    </script>
+
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
 </body>
 
 </html>

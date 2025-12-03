@@ -1,235 +1,66 @@
-// modal-confirmation.js
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                       POPUP_DELETAR.JS - COMPLETO                          ║
+// ║        Sistema de Confirmação e Deleção para Todos os Módulos             ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
 
-// Variáveis para armazenar o contexto da deleção
-let currentDeleteAction = null;
+// ===== FUNÇÃO GLOBAL DE MODAL =====
+function showDeleteModal(title, message, deleteAction) {
+    const modal = document.getElementById("deleteConfirmationModal");
+    if (!modal) {
+        console.error("Modal 'deleteConfirmationModal' não encontrado!");
+        return;
+    }
 
-// Referências ao Modal e Botões
-const modal = document.getElementById("deleteConfirmationModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
-const confirmButton = document.getElementById("confirmDeleteButton");
-const cancelButton = document.getElementById("cancelDeleteButton");
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalBody").textContent = message;
 
-/**
- * Função para configurar e mostrar o modal de confirmação.
- * @param {string} title Título do modal.
- * @param {string} body Mensagem do modal.
- * @param {Function} action Função a ser executada em caso de confirmação.
- */
-function showDeleteModal(title, body, action) {
-    modalTitle.textContent = title;
-    modalBody.textContent = body;
-    currentDeleteAction = action; // Armazena a função de ação
-    modal.style.display = 'flex'; // Exibe o modal
+    const confirmBtn = document.getElementById("confirmDeleteButton");
+    const cancelBtn = document.getElementById("cancelDeleteButton");
+
+    const handleConfirm = () => {
+        deleteAction();
+        modal.style.display = "none";
+        confirmBtn.removeEventListener("click", handleConfirm);
+        cancelBtn.removeEventListener("click", handleCancel);
+    };
+
+    const handleCancel = () => {
+        modal.style.display = "none";
+        confirmBtn.removeEventListener("click", handleConfirm);
+        cancelBtn.removeEventListener("click", handleCancel);
+    };
+
+    confirmBtn.addEventListener("click", handleConfirm);
+    cancelBtn.addEventListener("click", handleCancel);
+
+    modal.style.display = "flex";
 }
 
-// Oculta o modal ao clicar em Cancelar
-cancelButton.addEventListener("click", () => {
-    modal.style.display = 'none';
-    currentDeleteAction = null; // Limpa a ação
-});
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                            MÓDULO: ESTOQUE                                ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
 
-// Executa a ação armazenada ao clicar no botão Deletar do modal
-confirmButton.addEventListener("click", () => {
-    if (currentDeleteAction) {
-        currentDeleteAction(); // Executa a função de deleção
-    }
-    modal.style.display = 'none';
-    currentDeleteAction = null; // Limpa a ação
-});
+// ===== DELETAR ESTOQUE =====
+document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
+    const id = item.id.split("_")[2];
 
-
-// ========================================
-// FUNCIONÁRIO - SISTEMA DE DELEÇÃO
-// ========================================
-
-// ===== DELETAR FUNCIONÁRIO =====
-document.querySelectorAll("[id^='delete_employee_']").forEach(item => {
-    item.addEventListener("click", event => {
-        event.preventDefault();
-
-        // Extrai o ID do elemento (formato: delete_employee_123)
-        const id = item.id.split("_")[2];
-
-        if (id !== null && !isNaN(id)) {
-            // Define a função que será executada se o usuário confirmar
-            const deleteAction = () => {
-                // Cria um formulário temporário para fazer o POST
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "funcionario-gerenciamento";
-
-                // Cria campos ocultos
-                const inputId = document.createElement("input");
-                inputId.type = "hidden";
-                inputId.name = "id_employee";
-                inputId.value = id;
-
-                const inputButton = document.createElement("input");
-                inputButton.type = "hidden";
-                inputButton.name = "button";
-                inputButton.value = "Excluir";
-
-                // Adiciona campos ao formulário
-                form.appendChild(inputId);
-                form.appendChild(inputButton);
-
-                // Adiciona o formulário ao body e envia
-                document.body.appendChild(form);
-                form.submit();
-
-                console.log("✓ Funcionário ID " + id + " deletado com sucesso!");
-            };
-
-            showDeleteModal(
-                "Deletar Funcionário",
-                "Você tem certeza que deseja remover este funcionário permanentemente?",
-                deleteAction
-            );
-        }
-    });
-});
-
-
-// ===== DELETAR TIPO DE USUÁRIO =====
-document.querySelectorAll("[id^='delete_usertype_']").forEach(item => {
-    item.addEventListener("click", event => {
-        event.preventDefault();
-
-        // Extrai o ID do elemento (formato: delete_usertype_123)
-        const id = item.id.split("_")[2];
-
-        if (id !== null && !isNaN(id)) {
-            // Define a função que será executada se o usuário confirmar
-            const deleteAction = () => {
-                // Cria um formulário temporário para fazer o POST
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "usertype-gerenciamento";
-
-                // Cria campos ocultos
-                const inputId = document.createElement("input");
-                inputId.type = "hidden";
-                inputId.name = "id_user_type";
-                inputId.value = id;
-
-                const inputButton = document.createElement("input");
-                inputButton.type = "hidden";
-                inputButton.name = "button";
-                inputButton.value = "Excluir";
-
-                // Adiciona campos ao formulário
-                form.appendChild(inputId);
-                form.appendChild(inputButton);
-
-                // Adiciona o formulário ao body e envia
-                document.body.appendChild(form);
-                form.submit();
-
-                console.log("✓ Tipo de usuário ID " + id + " deletado com sucesso!");
-            };
-
-            showDeleteModal(
-                "Deletar Tipo de Usuário",
-                "Você tem certeza que deseja remover este tipo de usuário permanentemente?",
-                deleteAction
-            );
-        }
-    });
-});
-
-
-/* ========================================
-   ESTOQUE - SISTEMA DE DELEÇÃO
-   ======================================== */
-
-/*popup deletar init*/
-
-    // ===== DELETAR ESTOQUE (MODIFICADO) =====
-    document.querySelectorAll("[id^='delete_storage_']").forEach(item => {
-        item.addEventListener("click", event => {
-            event.preventDefault(); // Evita qualquer ação padrão do link/botão
-
-            const id = item.id.split("_")[2];
-
-            if (id !== null) {
-                // Define a função que será executada se o usuário confirmar
-                const deleteAction = () => {
-                    const id_storage = document.getElementById("id_storage");
-                    const btn_submit = document.getElementById("btn-submit");
-
-                    // Executa a lógica de deleção original
-                    id_storage.value = id;
-                    btn_submit.value = "Remover";
-                    btn_submit.click();
-                };
-
-                showDeleteModal(
-                    "Deletar Estoque",
-                    "Você tem certeza que deseja remover este estoque permanentemente?",
-                    deleteAction
-                );
-            }
-        });
-    });
-
-    // ===== DELETAR LOCAL (MODIFICADO) =====
-    document.querySelectorAll("[id^='delete_local_storage_']").forEach(item => {
-        item.addEventListener("click", event => {
-            event.preventDefault(); // Evita qualquer ação padrão do link/botão
-
-            const id = item.id.split("_")[3];
-
-            if (id !== null) {
-                // Define a função que será executada se o usuário confirmar
-                const deleteAction = () => {
-                    const id_storage_local = document.getElementById("id_storage_local");
-                    const btn_submit_local = document.getElementById("btn-submit_local");
-
-                    // Executa a lógica de deleção original
-                    id_storage_local.value = id;
-                    btn_submit_local.value = "Remover";
-                    btn_submit_local.click();
-                };
-
-                showDeleteModal(
-                    "Deletar Local de Estoque",
-                    "Você tem certeza que deseja remover este local de estoque permanentemente?",
-                    deleteAction
-                );
-            }
-        });
-    });
-/*popup deletar fim*/
-
-
-// ========================================
-// MAQUINÁRIO - SISTEMA DE DELEÇÃO
-// ========================================
-
-// ===== DELETAR USO DE MAQUINÁRIO =====
-document.querySelectorAll("[id^='delete_machinery_use_']").forEach(item => {
-    // Verifica se é um item de uso de maquinário (id_machinery_usage)
-    const id = item.id.split("_")[3];
-
-    // Se o ID for um número válido e maior que 0, é um uso de maquinário
     if (id !== null && !isNaN(id)) {
         item.addEventListener("click", event => {
             event.preventDefault();
 
             if (id !== null) {
                 const deleteAction = () => {
-                    const id_machinery_usage = document.getElementById("id_machinery_usage");
-                    const btn_submit = document.getElementById("btn-submit");
+                    const id_storage = document.getElementById("id_storage_form");
+                    const btn_submit_storage = document.querySelectorAll("input[id='btn-submit']")[0]; // Primeiro btn-submit (estoque)
 
-                    id_machinery_usage.value = id;
-                    btn_submit.value = "Remover";
-                    btn_submit.click();
+                    id_storage.value = id;
+                    btn_submit_storage.value = "Remover";
+                    btn_submit_storage.click();
                 };
 
                 showDeleteModal(
-                    "Deletar Uso de Maquinário",
-                    "Você tem certeza que deseja remover este registro de uso de maquinário permanentemente?",
+                    "Deletar Estoque",
+                    "Você tem certeza que deseja remover este item de estoque permanentemente?",
                     deleteAction
                 );
             }
@@ -237,38 +68,378 @@ document.querySelectorAll("[id^='delete_machinery_use_']").forEach(item => {
     }
 });
 
+// ===== DELETAR LOCAL DE ARMAZENAMENTO =====
+document.querySelectorAll("[id^='delete_local_storage_']").forEach(item => {
+    const id = item.id.split("_")[3];
 
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
 
-// ===== EDITAR USO DE MAQUINÁRIO =====
-document.querySelectorAll("p[id^='edit_machinery_usage_']").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const id = btn.dataset.id;
-        const usage_date = btn.dataset.usage_date;
-        const hours_usage = btn.dataset.hours_usage;
-        const fuel_consumed = btn.dataset.fuel_consumed;
-        const observation = btn.dataset.observation;
-        const id_machinery = btn.dataset.id_machinery;
-        const id_employee = btn.dataset.id_employee;
+            if (id !== null) {
+                const deleteAction = () => {
+                    const id_local_storage = document.getElementById("id_local_storage_form");
+                    const btn_submit_local = document.querySelectorAll("input[id='btn-submit']")[1]; // Segundo btn-submit (local)
 
-        // Preenche o formulário
-        document.getElementById("id_machinery_usage").value = id;
-        document.getElementById("usage_date").value = usage_date;
-        document.getElementById("hours_usage").value = hours_usage;
-        document.getElementById("fuel_consumed").value = fuel_consumed;
-        document.getElementById("observation").value = observation;
-        document.getElementById("id_machinery_fk").value = id_machinery;
-        document.getElementById("id_employee_fk").value = id_employee;
+                    id_local_storage.value = id;
+                    btn_submit_local.value = "Remover";
+                    btn_submit_local.click();
+                };
 
-        // Altera o botão para "Editar"
-        document.querySelectorAll("input[id='btn-submit'][value='Adicionar']").forEach(btn => {
-            btn.value = "Editar";
+                showDeleteModal(
+                    "Deletar Local de Armazenamento",
+                    "Você tem certeza que deseja remover este local de armazenamento permanentemente?",
+                    deleteAction
+                );
+            }
         });
-
-        console.log("✓ Uso de maquinário carregado para edição: ID " + id);
-    });
+    }
 });
 
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                         MÓDULO: FUNCIONÁRIO                               ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
 
+// ===== DELETAR FUNCIONÁRIO =====
+document.querySelectorAll("[id^='delete_employee_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "funcionario-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_employee";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Funcionário ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Funcionário",
+                    "Você tem certeza que deseja remover este funcionário permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ===== DELETAR TIPO DE USUÁRIO =====
+document.querySelectorAll("[id^='delete_usertype_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "usertype-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_user_type";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Tipo de Usuário ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Tipo de Usuário",
+                    "Você tem certeza que deseja remover este tipo de usuário permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                          MÓDULO: PRODUÇÃO                                 ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+// ===== DELETAR GRÃO =====
+document.querySelectorAll("[id^='delete_grain_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "producao-grains-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_grain";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Grão ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Grão",
+                    "Você tem certeza que deseja remover este grão permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ===== DELETAR TIPO DE CUSTO =====
+document.querySelectorAll("[id^='delete_costtype_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "producao-costtype-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_cost_type";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Tipo de Custo ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Tipo de Custo",
+                    "Você tem certeza que deseja remover este tipo de custo permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ===== DELETAR CUSTO DE PRODUÇÃO =====
+document.querySelectorAll("[id^='delete_cost_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "producao-cost-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_production_cost";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Custo de Produção ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Custo de Produção",
+                    "Você tem certeza que deseja remover este custo de produção permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ===== DELETAR TALHÃO =====
+document.querySelectorAll("[id^='delete_crop_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "producao-crop-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_crop";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Talhão ID " + id + " deletado com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Talhão",
+                    "Você tem certeza que deseja remover este talhão permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                           MÓDULO: BOLSA/COTAÇÃO                           ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+// ===== DELETAR COTAÇÃO =====
+document.querySelectorAll("[id^='delete_quote_']").forEach(item => {
+    const id = item.id.split("_")[2];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "bolsa-cotacao-gerenciamento";
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "id_market_quotes";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+
+                    document.body.appendChild(form);
+                    form.submit();
+
+                    console.log("✓ Cotação ID " + id + " deletada com sucesso!");
+                };
+
+                showDeleteModal(
+                    "Deletar Cotação",
+                    "Você tem certeza que deseja remover esta cotação permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                         MÓDULO: MAQUINÁRIO                                ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+// ===== DELETAR USO DE MAQUINÁRIO =====
+document.querySelectorAll("[id^='delete_machinery_use_']").forEach(item => {
+    const id = item.id.split("_")[3];
+
+    if (id !== null && !isNaN(id)) {
+        item.addEventListener("click", event => {
+            event.preventDefault();
+
+            if (id !== null) {
+                const deleteAction = () => {
+                    const id_machinery_use = document.getElementById("id_machinery_use_form");
+                    const btn_submit_use = document.querySelectorAll("input[id='btn-submit']")[0]; // Primeiro btn-submit (uso)
+
+                    id_machinery_use.value = id;
+                    btn_submit_use.value = "Remover";
+                    btn_submit_use.click();
+                };
+
+                showDeleteModal(
+                    "Deletar Uso de Maquinário",
+                    "Você tem certeza que deseja remover este uso de maquinário permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
 
 // ===== DELETAR MAQUINÁRIO =====
 document.querySelectorAll("[id^='delete_machinery_all_']").forEach(item => {
@@ -280,12 +451,12 @@ document.querySelectorAll("[id^='delete_machinery_all_']").forEach(item => {
 
             if (id !== null) {
                 const deleteAction = () => {
-                    const id_machinery = document.getElementById("id_machinery");
-                    const btn_submit = document.querySelectorAll("input[id='btn-submit']")[1]; // Segundo btn-submit (maquinário)
+                    const id_machinery = document.getElementById("id_machinery_form");
+                    const btn_submit_machinery = document.querySelectorAll("input[id='btn-submit']")[1]; // Segundo btn-submit (maquinário)
 
                     id_machinery.value = id;
-                    btn_submit.value = "Remover";
-                    btn_submit.click();
+                    btn_submit_machinery.value = "Remover";
+                    btn_submit_machinery.click();
                 };
 
                 showDeleteModal(
@@ -297,45 +468,6 @@ document.querySelectorAll("[id^='delete_machinery_all_']").forEach(item => {
         });
     }
 });
-
-
-
-// ===== EDITAR MAQUINÁRIO =====
-document.querySelectorAll("p[id^='edit_machinery_']").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const id = btn.dataset.id;
-        const model = btn.dataset.model;
-        const year = btn.dataset.year;
-        const total_worked_hours = btn.dataset.total_worked_hours;
-        const total_fuel_consumption = btn.dataset.total_fuel_consumption;
-        const brand = btn.dataset.brand;
-        const type = btn.dataset.type;
-
-        // Preenche o formulário
-        document.getElementById("id_machinery").value = id;
-        document.getElementById("model").value = model;
-        document.getElementById("year").value = year;
-        document.getElementById("total_worked_hours").value = total_worked_hours;
-        document.getElementById("total_fuel_consumption").value = total_fuel_consumption;
-
-        // Seleciona as opções corretas nos selects
-        document.querySelectorAll("select[name='brand']").forEach(select => {
-            select.value = brand;
-        });
-        document.querySelectorAll("select[name='type']").forEach(select => {
-            select.value = type;
-        });
-
-        // Altera o botão para "Editar"
-        document.querySelectorAll("input[id='btn-submit'][value='Adicionar']").forEach(btn => {
-            btn.value = "Editar";
-        });
-
-        console.log("✓ Maquinário carregado para edição: ID " + id);
-    });
-});
-
-
 
 // ===== DELETAR MARCA DE MAQUINÁRIO =====
 document.querySelectorAll("[id^='delete_machinery_brand_']").forEach(item => {
@@ -365,29 +497,6 @@ document.querySelectorAll("[id^='delete_machinery_brand_']").forEach(item => {
     }
 });
 
-
-
-// ===== EDITAR MARCA DE MAQUINÁRIO =====
-document.querySelectorAll("p[id^='edit_brand_']").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const id = btn.dataset.id;
-        const name = btn.dataset.name;
-
-        // Preenche o formulário
-        document.getElementById("id_machinery_brand_form").value = id;
-        document.getElementById("brand_name").value = name;
-
-        // Altera o botão para "Editar"
-        document.querySelectorAll("input[id='btn-submit'][value='Adicionar']").forEach(btn => {
-            btn.value = "Editar";
-        });
-
-        console.log("✓ Marca carregada para edição: ID " + id);
-    });
-});
-
-
-
 // ===== DELETAR TIPO DE MAQUINÁRIO =====
 document.querySelectorAll("[id^='delete_machinery_type_']").forEach(item => {
     const id = item.id.split("_")[3];
@@ -415,3 +524,10 @@ document.querySelectorAll("[id^='delete_machinery_type_']").forEach(item => {
         });
     }
 });
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                           FIM DO ARQUIVO                                  ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+console.log("✅ popup_deletar.js carregado com sucesso!");
+console.log("📊 Módulos carregados: ESTOQUE | FUNCIONÁRIO | PRODUÇÃO | BOLSA | MAQUINÁRIO");

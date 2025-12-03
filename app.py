@@ -1,8 +1,11 @@
 from src.database import DatabaseConnection
+
 from src.web import money_coffe_requests
+
 from flask import Flask, jsonify, render_template, session, request, redirect, url_for
 
 app = Flask(__name__)
+
 app.secret_key = "QUYFCUQCQGWCQBWXJHCIsndjsbcajnka"  # Replace with a strong, random key
 
 db_config = {
@@ -11,12 +14,14 @@ db_config = {
     "user": "root",
     "password": "",
 }
-db = DatabaseConnection(**db_config)
 
+db = DatabaseConnection(**db_config)
 
 # -------------------------
 # Helpers
 # -------------------------
+
+
 def _to_int_or_none(val):
     if val is None or val == "" or str(val).lower() == "none":
         return None
@@ -41,6 +46,8 @@ def _to_float_or_none(val):
 # -------------------------
 # Routes
 # -------------------------
+
+
 @app.route("/")
 def index():
     return redirect("/login")
@@ -83,6 +90,8 @@ def main():
 # -------------------------
 # Estoque
 # -------------------------
+
+
 @app.route("/estoque", methods=["GET"])
 def estoque():
     try:
@@ -90,7 +99,7 @@ def estoque():
         cursor = db.get_cursor()
         query = """
         SELECT s.id_storage AS id, CONCAT(g.name, " ", g.`type`) AS name,
-           s.quantity_bags, sl.name AS local, s.id_grain_fk, s.id_location_fk
+        s.quantity_bags, sl.name AS local, s.id_grain_fk, s.id_location_fk
         FROM storage s
         LEFT JOIN storagelocations sl ON sl.id_storage_location = s.id_location_fk
         LEFT JOIN grains g ON g.id_grain = s.id_grain_fk
@@ -127,6 +136,7 @@ def estoque():
             list_grains=list_grains,
             list_storage_local=locations,
         )
+
     except Exception as e:
         return render_template("erro404.html", msg=e)
     finally:
@@ -224,6 +234,8 @@ def estoque_local_gerenciamento():
 # -------------------------
 # Funcionário
 # -------------------------
+
+
 @app.route("/funcionario", methods=["GET"])
 def funcionario():
     try:
@@ -236,11 +248,18 @@ def funcionario():
         cursor.execute(query)
         employees = cursor.fetchall()
         list_employees = [
-            {"id": emp[0], "name": emp[1], "email": emp[2], "desc": emp[3], "activity":  "Ativo " if int(emp[4]) == 1 else "Inativo"}
+            {
+                "id": emp[0],
+                "name": emp[1],
+                "email": emp[2],
+                "desc": emp[3],
+                "activity": "Ativo " if int(emp[4]) == 1 else "Inativo",
+            }
             for emp in employees
         ]
+
         query = """
-        SELECT employees.id_employee, employees.NAME, employees.cpf, employees.job, employees.base_salary, employees.weekly_hours, employees.hire_date, crops.name, crops.id_crop 
+        SELECT employees.id_employee, employees.NAME, employees.cpf, employees.job, employees.base_salary, employees.weekly_hours, employees.hire_date, crops.name, crops.id_crop
         FROM employees INNER JOIN crops ON id_crop_fk=crops.id_crop;
         """
         cursor.execute(query)
@@ -255,7 +274,7 @@ def funcionario():
                 "weekly_hours": usr[5],
                 "hire_date": usr[6],
                 "name_crop_fk": usr[7],
-                "id_crop_fk":usr[8]
+                "id_crop_fk": usr[8],
             }
             for usr in employees_no_perfil
         ]
@@ -274,17 +293,16 @@ def funcionario():
         """
         cursor.execute(query)
         usertype = cursor.fetchall()
-        list_crop = [
-            {"id_crop": usr[0], "description": usr[1]} for usr in usertype
-        ]
+        list_crop = [{"id_crop": usr[0], "description": usr[1]} for usr in usertype]
 
         return render_template(
             "funcionario.html",
             list_employees=list_employees,
             list_employees_no_perfil=list_employees_no_perfil,
             list_usertype=list_usertype,
-            locations=list_crop
+            locations=list_crop,
         )
+
     except Exception as e:
         return render_template("erro404.html", msg=e)
     finally:
@@ -321,10 +339,18 @@ def funcionario_gerenciamento():
         if button == "Adicionar":
             # INSERT novo funcionário
             query = """
-                INSERT INTO employees (name, cpf, job, base_salary, weekly_hours, hire_date, id_crop_fk)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            INSERT INTO employees (name, cpf, job, base_salary, weekly_hours, hire_date, id_crop_fk)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
             """
-            params = (name, cpf, job, salary_val, weekly_hours_val, hire_date, crop_location_val)
+            params = (
+                name,
+                cpf,
+                job,
+                salary_val,
+                weekly_hours_val,
+                hire_date,
+                crop_location_val,
+            )
             cursor.execute(query, params)
             db.commit()
             print(f"✅ Funcionário '{name}' adicionado com sucesso!")
@@ -340,17 +366,26 @@ def funcionario_gerenciamento():
             # UPDATE funcionário
             if id_val is not None:
                 query = """
-                    UPDATE employees
-                    SET name = %s,
-                        cpf = %s,
-                        job = %s,
-                        base_salary = %s,
-                        weekly_hours = %s,
-                        hire_date = %s,
-                        id_crop_fk = %s
-                    WHERE id_employee = %s;
+                UPDATE employees
+                SET name = %s,
+                cpf = %s,
+                job = %s,
+                base_salary = %s,
+                weekly_hours = %s,
+                hire_date = %s,
+                id_crop_fk = %s
+                WHERE id_employee = %s;
                 """
-                params = (name, cpf, job, salary_val, weekly_hours_val, hire_date, crop_location_val, id_val)
+                params = (
+                    name,
+                    cpf,
+                    job,
+                    salary_val,
+                    weekly_hours_val,
+                    hire_date,
+                    crop_location_val,
+                    id_val,
+                )
                 cursor.execute(query, params)
                 db.commit()
 
@@ -414,6 +449,8 @@ def usertype_gerenciamento():
 # -------------------------
 # Maquinário (GET)
 # -------------------------
+
+
 @app.route("/maquinario", methods=["GET"])
 def maquinario():
     try:
@@ -423,8 +460,8 @@ def maquinario():
         # usage
         query = """
         SELECT mu.id_machinery_usage, mu.usage_date, mu.hours_usage, mu.fuel_consumed, mu.observation,
-               CONCAT(m.model, " / ", m.`year`) AS machinery, e.name AS employees,
-               mu.id_machinery_fk, mu.id_employee_fk
+        CONCAT(m.model, " / ", m.`year`) AS machinery, e.name AS employees,
+        mu.id_machinery_fk, mu.id_employee_fk
         FROM machineryusage AS mu
         INNER JOIN machinery AS m ON mu.id_machinery_fk = m.id_machinery
         INNER JOIN employees AS e ON e.id_employee = mu.id_employee_fk;
@@ -461,7 +498,7 @@ def maquinario():
         # machinery list
         query = """
         SELECT m.id_machinery, m.model, m.`year`, m.total_worked_hours, m.total_fuel_consumption,
-               mb.id_machinery_brand, mt.id_machinery_type, mb.name AS machinery_brand, mt.name AS machinery_type
+        mb.id_machinery_brand, mt.id_machinery_type, mb.name AS machinery_brand, mt.name AS machinery_type
         FROM machinery m
         INNER JOIN machinerybrand AS mb ON m.id_machinery_brand_fk = mb.id_machinery_brand
         INNER JOIN machinerytype AS mt ON m.id_machinery_type_fk = mt.id_machinery_type;
@@ -502,6 +539,7 @@ def maquinario():
             list_machinerybrand=list_machinerybrand,
             list_id_machinery_type=list_id_machinery_type,
         )
+
     except Exception as e:
         return render_template("erro404.html", msg=e)
     finally:
@@ -514,6 +552,8 @@ def maquinario():
 # -------------------------
 # Maquinário (USO) - POST (Insert / Update / Delete)
 # -------------------------
+
+
 @app.route("/maquinario-gerenciamento-uso", methods=["POST"])
 def maquinario_gerenciamento_uso():
     id_val = _to_int_or_none(request.form.get("id_machinery_usage"))
@@ -538,14 +578,14 @@ def maquinario_gerenciamento_uso():
         elif id_val is not None:
             # Edit / Save
             query = """
-                UPDATE machineryusage
-                SET usage_date = %s,
-                    hours_usage = %s,
-                    fuel_consumed = %s,
-                    observation = %s,
-                    id_machinery_fk = %s,
-                    id_employee_fk = %s
-                WHERE id_machinery_usage = %s;
+            UPDATE machineryusage
+            SET usage_date = %s,
+            hours_usage = %s,
+            fuel_consumed = %s,
+            observation = %s,
+            id_machinery_fk = %s,
+            id_employee_fk = %s
+            WHERE id_machinery_usage = %s;
             """
             params = (
                 usage_date,
@@ -562,8 +602,8 @@ def maquinario_gerenciamento_uso():
         else:
             # Insert
             query = """
-                INSERT INTO machineryusage (usage_date, hours_usage, fuel_consumed, observation, id_machinery_fk, id_employee_fk)
-                VALUES (%s, %s, %s, %s, %s, %s);
+            INSERT INTO machineryusage (usage_date, hours_usage, fuel_consumed, observation, id_machinery_fk, id_employee_fk)
+            VALUES (%s, %s, %s, %s, %s, %s);
             """
             params = (
                 usage_date,
@@ -590,6 +630,8 @@ def maquinario_gerenciamento_uso():
 # -------------------------
 # Maquinário (CRUD) - POST (Insert / Update)
 # -------------------------
+
+
 @app.route("/maquinario-gerenciamento", methods=["POST"])
 def maquinario_gerenciamento():
     id_val = _to_int_or_none(request.form.get("id_machinery"))
@@ -612,14 +654,14 @@ def maquinario_gerenciamento():
         ):
             # Update
             query = """
-                UPDATE machinery
-                SET model = %s,
-                    year = %s,
-                    total_worked_hours = %s,
-                    total_fuel_consumption = %s,
-                    id_machinery_brand_fk = %s,
-                    id_machinery_type_fk = %s
-                WHERE id_machinery = %s;
+            UPDATE machinery
+            SET model = %s,
+            year = %s,
+            total_worked_hours = %s,
+            total_fuel_consumption = %s,
+            id_machinery_brand_fk = %s,
+            id_machinery_type_fk = %s
+            WHERE id_machinery = %s;
             """
             params = (
                 model,
@@ -636,8 +678,8 @@ def maquinario_gerenciamento():
         elif button in ("Adicionar", "Add", None) and id_val is None:
             # Insert
             query = """
-                INSERT INTO machinery (model, year, total_worked_hours, total_fuel_consumption, id_machinery_brand_fk, id_machinery_type_fk)
-                VALUES (%s, %s, %s, %s, %s, %s);
+            INSERT INTO machinery (model, year, total_worked_hours, total_fuel_consumption, id_machinery_brand_fk, id_machinery_type_fk)
+            VALUES (%s, %s, %s, %s, %s, %s);
             """
             params = (
                 model,
@@ -664,6 +706,8 @@ def maquinario_gerenciamento():
 # -------------------------
 # Brand (CRUD)
 # -------------------------
+
+
 @app.route("/maquinario-gerenciamento-brand", methods=["POST"])
 def maquinario_gerenciamento_brand():
     id_val = _to_int_or_none(request.form.get("id_machinery_brand"))
@@ -707,6 +751,8 @@ def maquinario_gerenciamento_brand():
 # -------------------------
 # Type (CRUD)
 # -------------------------
+
+
 @app.route("/maquinario-gerenciamento-type", methods=["POST"])
 def maquinario_gerenciamento_type():
     id_val = _to_int_or_none(request.form.get("id_machinery_type"))
@@ -748,42 +794,382 @@ def maquinario_gerenciamento_type():
 
 
 # -------------------------
-# Cotação (CRUD)
+# Produção (GET)
 # -------------------------
-@app.route("/cotacao-gerenciamento", methods=["POST"])
-def cotacao_gerenciamento():
-    id_val = _to_int_or_none(request.form.get("id_market_quotes"))
-    price_per_bag = _to_float_or_none(request.form.get("price_per_bag"))
-    quote_date = request.form.get("quote_date")
-    observation = request.form.get("observation")
-    id_grain_fk = _to_int_or_none(request.form.get("id_grain_fk"))
+
+
+@app.route("/producao", methods=["GET"])
+def producao():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        # GET grains
+        query = """SELECT * FROM grains;"""
+        cursor.execute(query)
+        list_grains = []
+        grains = cursor.fetchall()
+        for grain in grains:
+            list_grains.append(
+                {"id_grain": grain[0], "name": grain[1], "type": grain[2]}
+            )
+
+        # GET cost types
+        query = """SELECT * FROM costtypes;"""
+        cursor.execute(query)
+        list_costtypes = []
+        costtypes = cursor.fetchall()
+        for costtype in costtypes:
+            list_costtypes.append(
+                {
+                    "id_cost_type": costtype[0],
+                    "name": costtype[1],
+                    "cost_value": costtype[2],
+                }
+            )
+
+        # GET production costs
+        query = """SELECT p.id_production_cost, p.cost_date, p.description, c.name FROM productioncosts AS p INNER JOIN costtypes AS c on p.id_cost_type_fk = c.id_cost_type;"""
+        cursor.execute(query)
+        list_productioncosts = []
+        productioncosts = cursor.fetchall()
+        for productioncost in productioncosts:
+            list_productioncosts.append(
+                {
+                    "id_production_cost": productioncost[0],
+                    "cost_date": productioncost[1],
+                    "description": productioncost[2],
+                    "cost_type_fk": productioncost[3],
+                }
+            )
+
+        # GET crops
+        query = """SELECT id_crop,name,area_hectares,current_season FROM crops;"""
+        cursor.execute(query)
+        list_cropies = []
+        cropies = cursor.fetchall()
+        for crops in cropies:
+            list_cropies.append(
+                {
+                    "id_crop": crops[0],
+                    "name": crops[1],
+                    "area_hectares": crops[2],
+                    "current_season": crops[3],
+                }
+            )
+
+        db.close()
+
+        return render_template(
+            "producao.html",
+            list_grains=list_grains,
+            list_costtypes=list_costtypes,
+            list_productioncosts=list_productioncosts,
+            list_cropies=list_cropies,
+        )
+
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+
+# ===== PRODUÇÃO: GRÃOS =====
+@app.route("/producao-grains-gerenciamento", methods=["POST"])
+def producao_grains_gerenciamento():
+    """
+    Rota para gerenciar grãos (INSERT, UPDATE, DELETE)
+    """
+    id_grain = request.form.get("id_grain")
+    name = request.form.get("name")
+    type_grain = request.form.get("type")
     button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_grain)
 
     try:
         db.connect()
         cursor = db.get_cursor()
 
-        if button in ("Adicionar", "Add"):
-            query = "INSERT INTO marketquotes (price_per_bag, quote_date, observation, id_grain_fk) VALUES (%s, %s, %s, %s);"
-            cursor.execute(query, (price_per_bag, quote_date, observation, id_grain_fk))
+        if button == "Adicionar":
+            query = "INSERT INTO grains (name, type) VALUES (%s, %s);"
+            cursor.execute(query, (name, type_grain))
             db.commit()
+            print(f"✅ Grão '{name}' adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            if id_val is not None:
+                query = "DELETE FROM grains WHERE id_grain = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Grão ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            if id_val is not None:
+                query = "UPDATE grains SET name = %s, type = %s WHERE id_grain = %s;"
+                cursor.execute(query, (name, type_grain, id_val))
+                db.commit()
+                print(f"✅ Grão ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print("producao_grains_gerenciamento error:", e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/producao")
+
+
+# ===== PRODUÇÃO: TIPO DE CUSTO =====
+@app.route("/producao-costtype-gerenciamento", methods=["POST"])
+def producao_costtype_gerenciamento():
+    """
+    Rota para gerenciar tipos de custo (INSERT, UPDATE, DELETE)
+    """
+    id_cost_type = request.form.get("id_cost_type")
+    name = request.form.get("name")
+    cost_value = request.form.get("cost_value")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_cost_type)
+    cost_val = _to_float_or_none(cost_value)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            query = "INSERT INTO costtypes (name, cost_value) VALUES (%s, %s);"
+            cursor.execute(query, (name, cost_val))
+            db.commit()
+            print(f"✅ Tipo de custo '{name}' adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            if id_val is not None:
+                query = "DELETE FROM costtypes WHERE id_cost_type = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Tipo de custo ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            if id_val is not None:
+                query = "UPDATE costtypes SET name = %s, cost_value = %s WHERE id_cost_type = %s;"
+                cursor.execute(query, (name, cost_val, id_val))
+                db.commit()
+                print(f"✅ Tipo de custo ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print("producao_costtype_gerenciamento error:", e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/producao")
+
+
+# ===== PRODUÇÃO: CUSTO DE PRODUÇÃO =====
+@app.route("/producao-cost-gerenciamento", methods=["POST"])
+def producao_cost_gerenciamento():
+    """
+    Rota para gerenciar custos de produção (INSERT, UPDATE, DELETE)
+    """
+    id_production_cost = request.form.get("id_production_cost")
+    cost_date = request.form.get("cost_date")
+    description = request.form.get("description")
+    id_cost_type_fk = request.form.get("id_cost_type_fk")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_production_cost)
+    cost_type_val = _to_int_or_none(id_cost_type_fk)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            query = "INSERT INTO productioncosts (cost_date, description, id_cost_type_fk) VALUES (%s, %s, %s);"
+            cursor.execute(query, (cost_date, description, cost_type_val))
+            db.commit()
+            print(f"✅ Custo de produção adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            if id_val is not None:
+                query = "DELETE FROM productioncosts WHERE id_production_cost = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Custo de produção ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            if id_val is not None:
+                query = "UPDATE productioncosts SET cost_date = %s, description = %s, id_cost_type_fk = %s WHERE id_production_cost = %s;"
+                cursor.execute(query, (cost_date, description, cost_type_val, id_val))
+                db.commit()
+                print(f"✅ Custo de produção ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print("producao_cost_gerenciamento error:", e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/producao")
+
+
+# ===== PRODUÇÃO: TALHÃO =====
+@app.route("/producao-crop-gerenciamento", methods=["POST"])
+def producao_crop_gerenciamento():
+    """
+    Rota para gerenciar talhões (INSERT, UPDATE, DELETE)
+    """
+    id_crop = request.form.get("id_crop")
+    name = request.form.get("name")
+    area_hectares = request.form.get("area_hectares")
+    current_season = request.form.get("current_season")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_crop)
+    area_val = _to_float_or_none(area_hectares)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            query = "INSERT INTO crops (name, area_hectares, current_season) VALUES (%s, %s, %s);"
+            cursor.execute(query, (name, area_val, current_season))
+            db.commit()
+            print(f"✅ Talhão '{name}' adicionado com sucesso!")
+
+        elif button in ("Remover", "Excluir"):
+            if id_val is not None:
+                query = "DELETE FROM crops WHERE id_crop = %s;"
+                cursor.execute(query, (id_val,))
+                db.commit()
+                print(f"✅ Talhão ID {id_val} deletado com sucesso!")
+
+        elif button in ("Editar", "Salvar"):
+            if id_val is not None:
+                query = "UPDATE crops SET name = %s, area_hectares = %s, current_season = %s WHERE id_crop = %s;"
+                cursor.execute(query, (name, area_val, current_season, id_val))
+                db.commit()
+                print(f"✅ Talhão ID {id_val} atualizado com sucesso!")
+
+    except Exception as e:
+        print("producao_crop_gerenciamento error:", e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+    return redirect("/producao")
+
+
+# -------------------------
+# Bolsa (GET)
+# -------------------------
+
+
+@app.route("/bolsa", methods=["GET"])
+def bolsa():
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        query = """SELECT m.id_market_quotes,m.price_per_bag,m.quote_date,m.observation,CONCAT(g.name,' - ',g.type) FROM marketquotes AS m INNER JOIN grains AS g ON m.id_grain_fk = g.id_grain;"""
+        cursor.execute(query)
+        list_marketquotes = []
+        marketquotes = cursor.fetchall()
+        for marketquote in marketquotes:
+            list_marketquotes.append(
+                {
+                    "id_market_quotes": marketquote[0],
+                    "price_per_bag": marketquote[1],
+                    "quote_date": marketquote[2],
+                    "observation": marketquote[3],
+                    "grain": marketquote[4],
+                }
+            )
+
+        query = """SELECT * FROM grains;"""
+        cursor.execute(query)
+        list_grains = []
+        grains = cursor.fetchall()
+        for grain in grains:
+            list_grains.append(
+                {"id_grain": grain[0], "name": grain[1], "type": grain[2]}
+            )
+
+        return render_template(
+            "bolsa.html",
+            cotacao=money_coffe_requests(),
+            list_marketquotes=list_marketquotes,
+            list_grains=list_grains,
+        )
+
+    except Exception as e:
+        return render_template("erro404.html", msg=e)
+    finally:
+        try:
+            db.close()
+        except:
+            pass
+
+
+# ===== BOLSA: COTAÇÃO =====
+@app.route("/bolsa-cotacao-gerenciamento", methods=["POST"])
+def bolsa_cotacao_gerenciamento():
+    """
+    Rota para gerenciar cotações de mercado (INSERT, UPDATE, DELETE)
+    """
+    id_market_quotes = request.form.get("id_market_quotes")
+    price_per_bag = request.form.get("price_per_bag")
+    quote_date = request.form.get("quote_date")
+    observation = request.form.get("observation")
+    id_grain_fk = request.form.get("id_grain_fk")
+    button = request.form.get("button")
+
+    id_val = _to_int_or_none(id_market_quotes)
+    price_val = _to_float_or_none(price_per_bag)
+    grain_val = _to_int_or_none(id_grain_fk)
+
+    try:
+        db.connect()
+        cursor = db.get_cursor()
+
+        if button == "Adicionar":
+            query = "INSERT INTO marketquotes (price_per_bag, quote_date, observation, id_grain_fk) VALUES (%s, %s, %s, %s);"
+            cursor.execute(query, (price_val, quote_date, observation, grain_val))
+            db.commit()
+            print(f"✅ Cotação adicionada com sucesso!")
 
         elif button in ("Remover", "Excluir"):
             if id_val is not None:
                 query = "DELETE FROM marketquotes WHERE id_market_quotes = %s;"
                 cursor.execute(query, (id_val,))
                 db.commit()
+                print(f"✅ Cotação ID {id_val} deletada com sucesso!")
 
-        elif button in ("Salvar", "Editar", "Save"):
+        elif button in ("Editar", "Salvar"):
             if id_val is not None:
                 query = "UPDATE marketquotes SET price_per_bag = %s, quote_date = %s, observation = %s, id_grain_fk = %s WHERE id_market_quotes = %s;"
                 cursor.execute(
-                    query, (price_per_bag, quote_date, observation, id_grain_fk, id_val)
+                    query, (price_val, quote_date, observation, grain_val, id_val)
                 )
                 db.commit()
+                print(f"✅ Cotação ID {id_val} atualizada com sucesso!")
 
     except Exception as e:
-        print("cotacao_gerenciamento error:", e)
+        print("bolsa_cotacao_gerenciamento error:", e)
     finally:
         try:
             db.close()
@@ -792,130 +1178,15 @@ def cotacao_gerenciamento():
 
     return redirect("/bolsa")
 
-
-@app.route("/producao", methods=["GET"])
-def producao():
-    try:
-        db.connect()
-        cursor = db.get_cursor()
-    except Exception as e:
-        return render_template("erro404.html", msg=e)
-    query = """SELECT * FROM grains;"""
-    cursor.execute(query)
-    list_grains = []
-    grains = cursor.fetchall()
-    for grain in grains:
-        list_grains.append({"id_grain": grain[0], "name": grain[1], "type": grain[2]})
-    query = """SELECT * FROM costtypes;"""
-    cursor.execute(query)
-    list_costtypes = []
-    costtypes = cursor.fetchall()
-    for costtype in costtypes:
-        list_costtypes.append(
-            {
-                "id_cost_type": costtype[0],
-                "name": costtype[1],
-                "cost_value": costtype[2],
-            }
-        )
-
-    query = """SELECT p.id_production_cost, p.cost_date, p.description, c.name FROM productioncosts AS p INNER JOIN costtypes AS c on p.id_cost_type_fk = c.id_cost_type;"""
-    cursor.execute(query)
-    list_productioncosts = []
-    productioncosts = cursor.fetchall()
-    for productioncost in productioncosts:
-        list_productioncosts.append(
-            {
-                "id_production_cost": productioncost[0],
-                "cost_date": productioncost[1],
-                "description": productioncost[2],
-                "cost_type_fk": productioncost[3],
-            }
-        )
-    query = """SELECT id_crop,name,area_hectares,current_season FROM crops;"""
-    cursor.execute(query)
-    list_cropies = []
-    cropies = cursor.fetchall()
-    for crops in cropies:
-        list_cropies.append(
-            {
-                "id_crop": crops[0],
-                "name": crops[1],
-                "area_hectares": crops[2],
-                "current_season": crops[3],
-            }
-        )
-
-    db.close()
-    return render_template(
-        "producao.html",
-        list_grains=list_grains,
-        list_costtypes=list_costtypes,
-        list_productioncosts=list_productioncosts,
-        list_cropies=list_cropies,
-    )
-
-
-@app.route("/bolsa", methods=["GET"])
-def bolsa():
-    try:
-        db.connect()
-        cursor = db.get_cursor()
-    except Exception as e:
-        return render_template("erro404.html", msg=e)
-    query = """SELECT m.id_market_quotes,m.price_per_bag,m.quote_date,m.observation,CONCAT(g.name,' - ',g.type) FROM marketquotes AS m INNER JOIN grains AS g ON m.id_grain_fk = g.id_grain;"""
-    cursor.execute(query)
-    list_marketquotes = []
-    marketquotes = cursor.fetchall()
-    for marketquote in marketquotes:
-        list_marketquotes.append(
-            {
-                "id_market_quotes": marketquote[0],
-                "price_per_bag": marketquote[1],
-                "quote_date": marketquote[2],
-                "observation": marketquote[3],
-                "grain": marketquote[4],
-            }
-        )
-    query = """SELECT * FROM grains;"""
-    cursor.execute(query)
-    list_grains = []
-    grains = cursor.fetchall()
-    for grain in grains:
-        list_grains.append({"id_grain": grain[0], "name": grain[1], "type": grain[2]})
-
-    return render_template(
-        "bolsa.html",
-        cotacao=money_coffe_requests(),
-        list_marketquotes=list_marketquotes,
-        list_grains=list_grains,
-    )
-
-
 # -------------------------
 # Exit / Data / Contact
 # -------------------------
+
+
 @app.route("/exit", methods=["GET"])
 def exit():
     session.clear()
     return redirect("/")
-
-
-@app.route("/data", methods=["GET"])
-def get_data():
-    try:
-        db.connect()
-        cursor = db.get_cursor()
-        cursor.execute("SELECT * FROM my_table")
-        results = cursor.fetchall()
-        return jsonify(results)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        try:
-            db.close()
-        except:
-            pass
 
 
 @app.route("/contato", methods=["GET"])

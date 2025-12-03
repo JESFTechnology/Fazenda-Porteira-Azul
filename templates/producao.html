@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
+    <link rel="stylesheet" href="./../static/css/popup_editar.css">
+    <link rel="stylesheet" href="./../static/css/dark-style-producao.css" id="stylesheet_body_producao">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
     <title>Fazenda Porteira Azul</title>
 
@@ -24,6 +26,7 @@
     </header>
 
     <section>
+        <!-- ========== TABELA 1: GRÃOS ========== -->
         <h1>Grãos</h1>
         <table>
             <tr>
@@ -33,18 +36,18 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="" method="post">
+                <form action="producao-grains-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name">
+                        0<input type="hidden" value="0" name="id_grain" id="id_grain">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="text" name="type" value="" class="input-value semBack-white" id="type">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="form_name_grain" placeholder="Digite o nome:">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
+                        <input type="text" name="type" value="" class="input-value semBack-white" id="form_type_grain" placeholder="Digite o tipo:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-grain" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
@@ -54,14 +57,21 @@
                 <td class="Margin_Padding">{{ item.name }}</td>
                 <td class="Margin_Padding">{{ item.type }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_grain p_actions"
+                    data-id="{{ item.id_grain }}"
+                    data-name="{{ item.name }}"
+                    data-type="{{ item.type }}">
+                    Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_grain_{{item.id_grain}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
         </table>
         <br>
+
+        <!-- ========== TABELA 2: CUSTO DOS MATERIAIS ========== -->
         <h1>Custo dos materiais</h1>
         <table>
             <tr>
@@ -71,18 +81,18 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="maquinario-veiculos-gerenciamento" method="post">
+                <form action="producao-costtype-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="model" value="" class="input-value semBack-white" id="model">
+                        0<input type="hidden" value="0" name="id_cost_type" id="id_cost_type">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="number" name="year" value="" class="input-value semBack-white" id="year">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="form_name_costtype" placeholder="Digite o nome:">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
+                        <input type="number" step="0.01" name="cost_value" value="0" class="input-value semBack-white" id="form_cost_value_costtype">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-costtype" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
@@ -92,14 +102,21 @@
                 <td class="Margin_Padding">{{ item.name }}</td>
                 <td class="Margin_Padding">R${{ item.cost_value }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_costtype p_actions"
+                    data-id="{{ item.id_cost_type }}"
+                    data-name="{{ item.name }}"
+                    data-cost_value="{{ item.cost_value }}">
+                    Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_costtype_{{item.id_cost_type}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
         </table>
         <br>
+
+        <!-- ========== TABELA 3: CUSTO DE PRODUÇÃO ========== -->
         <h1>Custo de Produção</h1>
         <table>
             <tr>
@@ -110,25 +127,21 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="" method="post">
+                <form action="producao-cost-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                        0<input type="hidden" value="0" name="id_production_cost" id="id_production_cost">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_">
+                        <input type="date" name="cost_date" value="" class="input-value semBack-white" id="form_cost_date_cost">
                     </td>
                     <td class="Margin_Padding">
-                        <select name="id_machinery_fk" id="id_machinery_fk" class="input-value semBack-white">
-                            {% for item in machinery_list %}
-                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="text" name="description" value="" class="input-value semBack-white" id="form_description_cost" placeholder="Digite a descrição:">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
+                        <select name="id_cost_type_fk" id="form_costtype_fk_cost" class="input-value semBack-white"></select>
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-cost" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
@@ -139,14 +152,22 @@
                 <td class="Margin_Padding">{{ item.description }}</td>
                 <td class="Margin_Padding">{{ item.cost_type_fk }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_cost p_actions"
+                    data-id="{{ item.id_production_cost }}"
+                    data-cost_date="{{ item.cost_date }}"
+                    data-description="{{ item.description }}"
+                    data-cost_type_fk="{{ item.cost_type_fk }}">
+                    Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_cost_{{item.id_production_cost}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
         </table>
         <br>
+
+        <!-- ========== TABELA 4: TALHÃO ========== -->
         <h1>Talhão</h1>
         <table>
             <tr>
@@ -157,21 +178,21 @@
                 <th>Ações</th>
             </tr>
             <tr>
-                <form action="" method="post">
+                <form action="producao-crop-gerenciamento" method="post">
                     <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_storage" id="id_storage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                        0<input type="hidden" value="0" name="id_crop" id="id_crop">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="number" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                        <input type="text" name="name" value="" class="input-value semBack-white" id="form_name_crop" placeholder="Digite o nome:">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="text" name="name" value="" class="input-value semBack-white" id="name_" placeholder="Insira aqui">
+                        <input type="number" step="0.01" name="area_hectares" value="0" class="input-value semBack-white" id="form_area_crop">
                     </td>
                     <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
+                        <input type="text" name="current_season" value="" class="input-value semBack-white" id="form_season_crop" placeholder="Digite a temporada:">
+                    </td>
+                    <td class="Margin_Padding">
+                        <input type="submit" value="Adicionar" id="btn-submit-crop" name="button" class="btn-submit input-value semBack-white">
                     </td>
                 </form>
             </tr>
@@ -182,9 +203,15 @@
                 <td class="Margin_Padding">{{ item.area_hectares }}</td>
                 <td class="Margin_Padding">{{ item.current_season }}</td>
                 <td class="Margin_Padding">
-                    <p id="">Editar</p>
+                    <p class="btn_edit_crop p_actions"
+                    data-id="{{ item.id_crop }}"
+                    data-name="{{ item.name }}"
+                    data-area="{{ item.area_hectares }}"
+                    data-season="{{ item.current_season }}">
+                    Editar
+                    </p>
                     <hr>
-                    <p id="">Excluir</p>
+                    <p class="p_actions" id="delete_crop_{{item.id_crop}}">Excluir</p>
                 </td>
             </tr>
             {% endfor %}
@@ -195,8 +222,225 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
-    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <!-- ========== POPUP 1: EDITAR GRÃO ========== -->
+    <div id="popup_edit_grain" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Grão</h3>
+                <span class="close_popup_grain">&times;</span>
+            </div>
 
+            <form id="form_edit_grain" action="producao-grains-gerenciamento" method="post">
+                <input type="hidden" name="id_grain" id="edit_id_grain">
+
+                <label>Nome</label>
+                <input type="text" name="name" id="edit_name_grain">
+
+                <label>Tipo</label>
+                <input type="text" name="type" id="edit_type_grain">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== POPUP 2: EDITAR TIPO DE CUSTO ========== -->
+    <div id="popup_edit_costtype" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Tipo de Custo</h3>
+                <span class="close_popup_costtype">&times;</span>
+            </div>
+
+            <form id="form_edit_costtype" action="producao-costtype-gerenciamento" method="post">
+                <input type="hidden" name="id_cost_type" id="edit_id_costtype">
+
+                <label>Nome</label>
+                <input type="text" name="name" id="edit_name_costtype">
+
+                <label>Custo por Kg</label>
+                <input type="number" step="0.01" name="cost_value" id="edit_cost_value_costtype">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== POPUP 3: EDITAR CUSTO DE PRODUÇÃO ========== -->
+    <div id="popup_edit_cost" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Custo de Produção</h3>
+                <span class="close_popup_cost">&times;</span>
+            </div>
+
+            <form id="form_edit_cost" action="producao-cost-gerenciamento" method="post">
+                <input type="hidden" name="id_production_cost" id="edit_id_cost">
+
+                <label>Data de custo</label>
+                <input type="date" name="cost_date" id="edit_cost_date_cost">
+
+                <label>Descrição</label>
+                <input type="text" name="description" id="edit_description_cost">
+
+                <label>Tipo do custo</label>
+                <select name="id_cost_type_fk" id="edit_costtype_fk_cost"></select>
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== POPUP 4: EDITAR TALHÃO ========== -->
+    <div id="popup_edit_crop" class="popup">
+        <div class="popup_content">
+            <div class="popup_header">
+                <h3>Editar Talhão</h3>
+                <span class="close_popup_crop">&times;</span>
+            </div>
+
+            <form id="form_edit_crop" action="producao-crop-gerenciamento" method="post">
+                <input type="hidden" name="id_crop" id="edit_id_crop">
+
+                <label>Nome</label>
+                <input type="text" name="name" id="edit_name_crop">
+
+                <label>Área (Hectares)</label>
+                <input type="number" step="0.01" name="area_hectares" id="edit_area_crop">
+
+                <label>Temporada de plantio</label>
+                <input type="text" name="current_season" id="edit_season_crop">
+
+                <input type="submit" class="btn-save-popup" value="Editar" name="button">
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== MODAL DE CONFIRMAÇÃO DE DELEÇÃO ========== -->
+    <div id="deleteConfirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+            <h3 id="modalTitle">Confirmação de Deleção</h3>
+            <p id="modalBody">Deseja realmente deletar este item?</p>
+
+            <button id="confirmDeleteButton" style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">
+                Deletar
+            </button>
+            <button id="cancelDeleteButton" style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== POPUP EDITAR GRÃO =====
+        const popupGrainEdit = document.getElementById("popup_edit_grain");
+        const closePopupGrainEdit = document.querySelector(".close_popup_grain");
+
+        document.querySelectorAll(".btn_edit_grain").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_grain").value = btn.dataset.id;
+                document.getElementById("edit_name_grain").value = btn.dataset.name;
+                document.getElementById("edit_type_grain").value = btn.dataset.type;
+
+                console.log("Editando grão - Id: " + btn.dataset.id);
+
+                popupGrainEdit.style.display = "block";
+            });
+        });
+
+        closePopupGrainEdit.onclick = () => popupGrainEdit.style.display = "none";
+
+        // ===== POPUP EDITAR TIPO DE CUSTO =====
+        const popupCostTypeEdit = document.getElementById("popup_edit_costtype");
+        const closePopupCostTypeEdit = document.querySelector(".close_popup_costtype");
+
+        document.querySelectorAll(".btn_edit_costtype").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_costtype").value = btn.dataset.id;
+                document.getElementById("edit_name_costtype").value = btn.dataset.name;
+                document.getElementById("edit_cost_value_costtype").value = btn.dataset.cost_value;
+
+                console.log("Editando tipo de custo - Id: " + btn.dataset.id);
+
+                popupCostTypeEdit.style.display = "block";
+            });
+        });
+
+        closePopupCostTypeEdit.onclick = () => popupCostTypeEdit.style.display = "none";
+
+        // ===== POPUP EDITAR CUSTO DE PRODUÇÃO =====
+        const popupCostEdit = document.getElementById("popup_edit_cost");
+        const closePopupCostEdit = document.querySelector(".close_popup_cost");
+
+        document.querySelectorAll(".btn_edit_cost").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_cost").value = btn.dataset.id;
+                document.getElementById("edit_cost_date_cost").value = btn.dataset.cost_date;
+                document.getElementById("edit_description_cost").value = btn.dataset.description;
+
+                // Preencher select de tipos de custo
+                const list_costtypes = {{ list_costtypes | tojson }};
+                const costtype_cost = document.getElementById("edit_costtype_fk_cost");
+                const selected_id_costtype = btn.dataset.cost_type_fk;
+                costtype_cost.innerHTML = list_costtypes.map(c =>
+                    `<option style="color: white" value="${c.id_cost_type}" ${c.id_cost_type == selected_id_costtype ? 'selected' : ''}>${c.name}</option>`
+                ).join('');
+
+                console.log("Editando custo - Id: " + btn.dataset.id);
+
+                popupCostEdit.style.display = "block";
+            });
+        });
+
+        closePopupCostEdit.onclick = () => popupCostEdit.style.display = "none";
+
+        // ===== POPUP EDITAR TALHÃO =====
+        const popupCropEdit = document.getElementById("popup_edit_crop");
+        const closePopupCropEdit = document.querySelector(".close_popup_crop");
+
+        document.querySelectorAll(".btn_edit_crop").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit_id_crop").value = btn.dataset.id;
+                document.getElementById("edit_name_crop").value = btn.dataset.name;
+                document.getElementById("edit_area_crop").value = btn.dataset.area;
+                document.getElementById("edit_season_crop").value = btn.dataset.season;
+
+                console.log("Editando talhão - Id: " + btn.dataset.id);
+
+                popupCropEdit.style.display = "block";
+            });
+        });
+
+        closePopupCropEdit.onclick = () => popupCropEdit.style.display = "none";
+
+        // ===== FECHAR POPUPS AO CLICAR FORA =====
+        window.addEventListener("click", (e) => {
+            if (e.target == popupGrainEdit) popupGrainEdit.style.display = "none";
+            if (e.target == popupCostTypeEdit) popupCostTypeEdit.style.display = "none";
+            if (e.target == popupCostEdit) popupCostEdit.style.display = "none";
+            if (e.target == popupCropEdit) popupCropEdit.style.display = "none";
+        });
+
+        // ===== PREENCHER SELECTS INICIAIS =====
+        document.getElementById("form_costtype_fk_cost").innerHTML = `
+            {% for costtype in list_costtypes %}
+                <option value="{{ costtype.id_cost_type }}">{{ costtype.name }}</option>
+            {% endfor %}
+        `;
+
+        // ===== TEMA =====
+        document.getElementById("theme").addEventListener("click", () => {
+            if (localStorage.getItem("theme") === "dark") {
+                localStorage.setItem("theme", "light");
+            } else {
+                localStorage.setItem("theme", "dark");
+            }
+            location.reload();
+        });
+    </script>
+
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{url_for('static', filename='js/popup_deletar.js')}}"></script>
 </body>
 
 </html>
