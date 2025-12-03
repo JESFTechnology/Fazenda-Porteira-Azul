@@ -415,3 +415,43 @@ document.querySelectorAll("[id^='delete_machinery_type_']").forEach(item => {
         });
     }
 });
+
+// DELETAR GRÃO
+document.querySelectorAll("[id^='deletegrain']").forEach(item => {
+    const id = item.id.split("deletegrain")[1];
+
+    if (id != null && !isNaN(id)) {
+        item.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            if (id != null) {
+                const deleteAction = () => {
+                    const form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "producao-gerenciamento-graos"; // ajuste para a rota correta
+
+                    const inputId = document.createElement("input");
+                    inputId.type = "hidden";
+                    inputId.name = "idgrain";
+                    inputId.value = id;
+
+                    const inputButton = document.createElement("input");
+                    inputButton.type = "hidden";
+                    inputButton.name = "button";
+                    inputButton.value = "Excluir";
+
+                    form.appendChild(inputId);
+                    form.appendChild(inputButton);
+                    document.body.appendChild(form);
+                    form.submit();
+                };
+
+                showDeleteModal(
+                    "Deletar Grão",
+                    "Você tem certeza que deseja remover este grão permanentemente?",
+                    deleteAction
+                );
+            }
+        });
+    }
+});
