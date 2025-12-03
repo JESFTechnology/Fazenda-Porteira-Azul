@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./../static/css/style.css" id="stylesheet_body">
     <link rel="stylesheet" href="./../static/css/dark-style-tabelas.css">
     <link rel="shortcut icon" href="{{url_for('static', filename='img/logo.png')}}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-popup.css') }}">
     <title>Fazenda Porteira Azul</title>
 
 </head>
@@ -25,56 +26,67 @@
 
     <section>
         <h1>Registro de Cotações</h1>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Preço por Saco de 60Kg</th>
-                <th>Data da cotação</th>
-                <th>Observação</th>
-                <th>Grão</th>
-                <th>Ações</th>
-            </tr>
-            <tr>
-                <form action="maquinario-gerenciamento" method="post">
-                    <td class="Margin_Padding">
-                        0<input type="hidden" value="0" name="id_machinery_usage" id="id_machinery_usage"></td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="price_per_bag" value="" class="input-value semBack-white" id="name">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Preço por Saco de 60Kg</th>
+                    <th>Data da cotação</th>
+                    <th>Observação</th>
+                    <th>Grão</th>
+                    <th>Ações</th>
+                </tr>
+                <tr>
+                    <form action="bolsa-gerenciamento" method="post">
+                        <td class="MarginPadding">
+                            <input type="hidden" value="0" name="idmarketquotes" id="idmarketquotes">
+                            0
+                        </td>
+                        <td class="MarginPadding">
+                            <input type="number" step="0.01" name="priceperbag" value="" class="input-value semBack-white" id="priceperbag">
+                        </td>
+                        <td class="MarginPadding">
+                            <input type="date" name="quotedate" value="" class="input-value semBack-white" id="quotedate">
+                        </td>
+                        <td class="MarginPadding">
+                            <input type="text" name="observation" value="" class="input-value semBack-white" id="observation">
+                        </td>
+                        <td class="MarginPadding">
+                            <select name="idgrainfk" id="idgrainfk" class="input-value semBack-white">
+                                {% for item in listgrains %}
+                                    <option value="{{ item.idgrain }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td class="MarginPadding">
+                            <input type="submit" value="Adicionar" id="btn-submit" name="button"
+                                class="btn-submit input-value semBack-white">
+                        </td>
+                    </form>
+                </tr>
+
+                {% for item in list_marketquotes %}
+                <tr>
+                    <td class="MarginPadding">{{ item.idmarketquotes }}</td>
+                    <td class="MarginPadding">{{ item.priceperbag }}</td>
+                    <td class="MarginPadding">{{ item.quotedate }}</td>
+                    <td class="MarginPadding">{{ item.observation }}</td>
+                    <td class="MarginPadding">{{ item.grain }}</td>
+                    <td class="MarginPadding">
+                        <p class="btneditmarketquote"
+                        data-id="{{ item.idmarketquotes }}"
+                        data-priceperbag="{{ item.priceperbag }}"
+                        data-quotedate="{{ item.quotedate }}"
+                        data-observation="{{ item.observation }}"
+                        data-idgrainfk="{{ item.idgrainfk }}">
+                        Editar
+                        </p>
+                        <hr>
+                        <p class="pactions" id="deletemarketquote{{ item.idmarketquotes }}">Excluir</p>
                     </td>
-                    <td class="Margin_Padding">
-                        <input type="date" name="quote_date" value="" class="input-value semBack-white" id="type">
-                    </td>
-                    <td class="Margin_Padding">
-                        <input type="text" name="observation" value="" class="input-value semBack-white" id="type">
-                    </td>
-                    <td class="Margin_Padding">
-                        <select name="id_grain_fk" id="id_grain_fk" class="input-value semBack-white">
-                            {% for item in machinery_list %}
-                            <option value="{{ item.id_machinery }}">{{ item.model }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td class="Margin_Padding">
-                        <input type="submit" value="Adicionar" id="btn-submit" name="button"
-                            class="btn-submit input-value semBack-white">
-                    </td>
-                </form>
-            </tr>
-            {% for item in list_marketquotes %}
-            <tr>
-                <td class="Margin_Padding">{{ item.id_market_quotes}}</td>
-                <td class="Margin_Padding">{{ item.price_per_bag }}</td>
-                <td class="Margin_Padding">{{ item.quote_date }}</td>
-                <td class="Margin_Padding">{{ item.observation }}</td>
-                <td class="Margin_Padding">{{ item.grain }}</td>
-                <td class="Margin_Padding">
-                    <p id="">Editar</p>
-                    <hr>
-                    <p id="">Excluir</p>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+                </tr>
+                {% endfor %}
+            </table>
+
         <br>
         {% if cotacao[0][0]['municipality'] != None %}
         <h1>Cotação atual do café cereja (60Kg por saco)</h1>
@@ -125,7 +137,81 @@
         <p>© 2025 Sistema Inteligente | Desenvolvido por JoSa | LuRo | LuRi | LiFe </p>
     </footer>
 
+    <div id="deleteConfirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%; text-align:center;">
+            <h3 id="modalTitle">Confirmação de Deleção</h3>
+            <p id="modalBody">Deseja realmente deletar este item?</p>
+            <button id="confirmDeleteButton" style="background:red; color:white; padding:10px 15px; border:none; border-radius:3px; margin-right:10px; cursor:pointer;">Deletar</button>
+            <button id="cancelDeleteButton" style="background:gray; color:white; padding:10px 15px; border:none; border-radius:3px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="popupeditmarketquote" class="popup">
+        <div class="popupcontent">
+            <div class="popupheader">
+            <h3>Editar Cotação</h3>
+            <span class="closepopupmarketquote times">&times;</span>
+            </div>
+            <form id="formeditmarketquote" action="bolsa-gerenciamento" method="post">
+            <input type="hidden" name="idmarketquotes" id="editidmarketquotes">
+
+            <label>Preço por Saco de 60Kg</label>
+            <input type="number" step="0.01" name="priceperbag" id="editpriceperbag">
+
+            <label>Data da cotação</label>
+            <input type="date" name="quotedate" id="editquotedate">
+
+            <label>Observação</label>
+            <input type="text" name="observation" id="editobservation">
+
+            <label>Grão</label>
+            <select name="idgrainfk" id="editidgrainfk">
+                {% for item in listgrains %}
+                <option value="{{ item.idgrain }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="submit" value="Salvar" id="btn-submit" name="button"
+                    class="btn-submit input-value semBack-white">
+            </form>
+        </div>
+    </div> 
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const addShow = el => el && el.classList.add("show");
+        const removeShow = el => el && el.classList.remove("show");
+
+        // fechar popup da bolsa
+        document.querySelectorAll(".closepopupmarketquote").forEach(btn => {
+            btn.addEventListener("click", () => {
+                removeShow(document.getElementById("popupeditmarketquote"));
+            });
+        });
+
+        // editar cotação
+        document.querySelectorAll(".btneditmarketquote").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const popup = document.getElementById("popupeditmarketquote");
+                addShow(popup);
+
+                document.getElementById("editidmarketquotes").value = btn.dataset.id || "";
+                document.getElementById("editpriceperbag").value = btn.dataset.priceperbag || "";
+                document.getElementById("editquotedate").value = btn.dataset.quotedate || "";
+                document.getElementById("editobservation").value = btn.dataset.observation || "";
+
+                const grainVal = btn.dataset.idgrainfk || "";
+                if (grainVal) {
+                    document.getElementById("editidgrainfk").value = grainVal;
+                }
+            });
+        });
+    });
+
+    </script>
+
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/popup_deletar.js') }}"></script>
 
 </body>
 

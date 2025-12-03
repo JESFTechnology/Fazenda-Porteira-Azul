@@ -455,3 +455,41 @@ document.querySelectorAll("[id^='deletegrain']").forEach(item => {
         });
     }
 });
+
+// DELETAR COTAÇÃO DE MERCADO
+document.querySelectorAll("[id^='deletemarketquote']").forEach(item => {
+    const id = item.id.split("deletemarketquote")[1];
+
+    if (id != null && !isNaN(id)) {
+        item.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const deleteAction = () => {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "bolsa-gerenciamento"; // ajuste se sua rota for outra
+
+                const inputId = document.createElement("input");
+                inputId.type = "hidden";
+                inputId.name = "idmarketquotes";
+                inputId.value = id;
+
+                const inputButton = document.createElement("input");
+                inputButton.type = "hidden";
+                inputButton.name = "button";
+                inputButton.value = "Excluir";
+
+                form.appendChild(inputId);
+                form.appendChild(inputButton);
+                document.body.appendChild(form);
+                form.submit();
+            };
+
+            showDeleteModal(
+                "Deletar Cotação",
+                "Você tem certeza que deseja remover esta cotação permanentemente?",
+                deleteAction
+            );
+        });
+    }
+});
